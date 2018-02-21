@@ -63,6 +63,7 @@ static void print_help_line() {
 int main( int argc, char** argv ) {
     int ch = 0;
     int cur_selected_file_index = 0;
+    int note_selection_scroll_offset = 0;
 
     Storage s = { 0 };
 
@@ -82,17 +83,27 @@ int main( int argc, char** argv ) {
     do {
         erase();
 
-        switch( ch ) {
-            case KEY_F(2):
-                cur_selected_file_index++;
-                if( cur_selected_file_index > s.file_count - 1 ) {
-                    cur_selected_file_index = 0;
-                }
-                break;
+        switch( ch ) {            
             case KEY_F(1):
                 cur_selected_file_index--;
                 if( cur_selected_file_index < 0 ) {
                     cur_selected_file_index = s.file_count - 1;
+                    note_selection_scroll_offset = s.file_count + 1 - LINES / 2;
+                }
+
+                if( cur_selected_file_index - note_selection_scroll_offset < 0 ) {
+                    note_selection_scroll_offset--;
+                }
+                break;
+            case KEY_F(2):
+                cur_selected_file_index++;
+                if( cur_selected_file_index > s.file_count - 1 ) {
+                    cur_selected_file_index = 0;
+                    note_selection_scroll_offset = 0;
+                }
+
+                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 > LINES - 1 ) {
+                    note_selection_scroll_offset++;
                 }
                 break;
             case KEY_F(5):
@@ -112,12 +123,12 @@ int main( int argc, char** argv ) {
                 break;
         }
 
-        for( int i = 0; i < s.file_count; i++ ) {
-            mvprintw((i * 2) + 1, 1, s.files[ i ]);
+        for( int i = 0; i + note_selection_scroll_offset < s.file_count; i++ ) {
+            mvprintw((i * 2) + 1, 1, s.files[ i + note_selection_scroll_offset ]);
         }
 
         if( s.file_count > 0 && cur_selected_file_index < s.file_count) {
-            print_file_selector(cur_selected_file_index);
+            print_file_selector(cur_selected_file_index - note_selection_scroll_offset);
         }
         else {
             mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
