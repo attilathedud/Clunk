@@ -49,6 +49,31 @@ void storage_cleanup( Storage *s ) {
     s->file_count = 0;
 }
 
+static int natural_sort( const void *a, const void *b )
+{
+    char a_prefix[6] = { 0 };
+    char b_prefix[6] = { 0 };
+
+    strncpy(a_prefix, *(const char**)a, 5);
+    strncpy(b_prefix, *(const char**)b, 5);
+
+    if( strcmp(a_prefix, "note_") == 0 && strcmp(b_prefix, "note_") == 0 ) {
+        memset(a_prefix, 0, 6);
+        memset(b_prefix, 0, 6);
+
+        memcpy(a_prefix, *(const char**)a+5, strlen(*(const char**)a) - 5);
+        memcpy(b_prefix, *(const char**)b+5, strlen(*(const char**)b) - 5);
+
+        long a_id = strtol(a_prefix, NULL, 10 );
+        long b_id = strtol(b_prefix, NULL, 10 );
+
+        return a_id - b_id;
+    }
+    else {
+        return strcasecmp(*(const char**)a, *(const char**)b);
+    }
+}
+
 int get_notes_in_directory( Storage *s ) {
     DIR *dir = NULL;
     struct dirent *dp;   
@@ -68,6 +93,8 @@ int get_notes_in_directory( Storage *s ) {
 
         s->file_count++;
     }
+
+    qsort( s->files, s->file_count, sizeof (char *), natural_sort );
 
     return 0;
 }
