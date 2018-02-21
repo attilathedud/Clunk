@@ -89,6 +89,9 @@ int main( int argc, char** argv ) {
                 if( cur_selected_file_index < 0 ) {
                     cur_selected_file_index = s.file_count - 1;
                     note_selection_scroll_offset = s.file_count + 1 - LINES / 2;
+                    if( note_selection_scroll_offset < 0 ) {
+                        note_selection_scroll_offset = 0;
+                    }
                 }
 
                 if( cur_selected_file_index - note_selection_scroll_offset < 0 ) {

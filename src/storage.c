@@ -10,6 +10,33 @@
 #include "include/storage.h"
 #include "include/consts.h"
 
+static const char* note_prefix = "note_";
+
+static int natural_sort( const void *a, const void *b )
+{
+    char a_buffer[6] = { 0 };
+    char b_buffer[6] = { 0 };
+
+    strncpy(a_buffer, *(const char**)a, strlen(note_prefix));
+    strncpy(b_buffer, *(const char**)b, strlen(note_prefix));
+
+    if( strcmp(a_buffer, note_prefix) == 0 && strcmp(b_buffer, note_prefix) == 0 ) {
+        memset(a_buffer, 0, 6);
+        memset(b_buffer, 0, 6);
+
+        memcpy(a_buffer, *(const char**)a + strlen(note_prefix), strlen(*(const char**)a) - strlen(note_prefix));
+        memcpy(b_buffer, *(const char**)b + strlen(note_prefix), strlen(*(const char**)b) - strlen(note_prefix));
+
+        long a_id = strtol(a_buffer, NULL, 10 );
+        long b_id = strtol(b_buffer, NULL, 10 );
+
+        return a_id - b_id;
+    }
+    else {
+        return strcasecmp(*(const char**)a, *(const char**)b);
+    }
+}
+
 static int get_or_create_notes_directory( Storage *s, DIR **dir ) {
     if( s == NULL )
         return -1;
@@ -49,31 +76,6 @@ void storage_cleanup( Storage *s ) {
     s->file_count = 0;
 }
 
-static int natural_sort( const void *a, const void *b )
-{
-    char a_prefix[6] = { 0 };
-    char b_prefix[6] = { 0 };
-
-    strncpy(a_prefix, *(const char**)a, 5);
-    strncpy(b_prefix, *(const char**)b, 5);
-
-    if( strcmp(a_prefix, "note_") == 0 && strcmp(b_prefix, "note_") == 0 ) {
-        memset(a_prefix, 0, 6);
-        memset(b_prefix, 0, 6);
-
-        memcpy(a_prefix, *(const char**)a+5, strlen(*(const char**)a) - 5);
-        memcpy(b_prefix, *(const char**)b+5, strlen(*(const char**)b) - 5);
-
-        long a_id = strtol(a_prefix, NULL, 10 );
-        long b_id = strtol(b_prefix, NULL, 10 );
-
-        return a_id - b_id;
-    }
-    else {
-        return strcasecmp(*(const char**)a, *(const char**)b);
-    }
-}
-
 int get_notes_in_directory( Storage *s ) {
     DIR *dir = NULL;
     struct dirent *dp;   
@@ -83,7 +85,7 @@ int get_notes_in_directory( Storage *s ) {
 
     if( get_or_create_notes_directory(s, &dir) == -1 ) 
         return -1;
-    
+
     while ((dp = readdir (dir)) != NULL) {
         if( strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".DS_Store") == 0 )
             continue;
@@ -99,15 +101,17 @@ int get_notes_in_directory( Storage *s ) {
     return 0;
 }
 
-int create_note( Storage *s ) {
-    char note_name[256] = { 0 };    //todo fix path length issue
+int create_note( const Storage *s ) {
+    char *note_name;
     FILE *temp_file;
 
     if( s == NULL )
         return -1;
 
+    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(note_prefix) + 2 + 1);
+
     for( int i = 0; i < MAX_NOTES; i++ ) {
-        sprintf(note_name, "%s/note_%d", s->home_directory, i + 1);
+        sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
         if( ( temp_file = fopen(note_name, "r") ) ){
             fclose( temp_file );
         }
@@ -118,16 +122,23 @@ int create_note( Storage *s ) {
         }
     }
 
+    free( note_name );
+
     return 0;
 }
 
-int delete_note( Storage *s, int file_index ) {
+int delete_note( const Storage *s, const int file_index ) {
+    char *note_name;
+
     if( s == NULL )
         return -1;
 
-    char note_name[256] = { 0 };
+    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+
     sprintf(note_name, "%s/%s", s->home_directory, s->files[file_index]);
     remove( note_name );
+
+    free( note_name );
 
     return 0;
 }
