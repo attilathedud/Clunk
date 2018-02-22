@@ -92,7 +92,7 @@ int get_notes_in_directory( Storage *s ) {
     if( get_or_create_notes_directory(s, &dir) == -1 ) 
         return -1;
 
-    s->files = calloc( MAX_NOTES, sizeof(char*) );
+    s->files = calloc( NOTES_ALLOC_STEP, sizeof(char*) );
 
     while ((dp = readdir (dir)) != NULL) {
         if( strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".DS_Store") == 0 )
@@ -102,9 +102,9 @@ int get_notes_in_directory( Storage *s ) {
         strcpy(s->files[s->file_count], dp->d_name);
 
         s->file_count++;
-        if( s->file_count > MAX_NOTES - 1 ) {
+        if( s->file_count > NOTES_ALLOC_STEP - 1 ) {
             char **temp_note_buffer = s->files;
-            s->files = calloc( s->file_count + MAX_NOTES, sizeof(char*));
+            s->files = calloc( s->file_count + NOTES_ALLOC_STEP, sizeof(char*));
             memcpy(s->files, temp_note_buffer, (s->file_count) * sizeof(char*));
             free(temp_note_buffer);
             temp_note_buffer = NULL;
