@@ -127,7 +127,7 @@ int main( int argc, char** argv ) {
                     cur_selected_file_index = ( s.file_count - 1 < 0 ) ? 0 : s.file_count - 1;
                 }
 
-                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 1 ) {
+                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 2 ) {
                     note_selection_scroll_offset--;
                 }
 
