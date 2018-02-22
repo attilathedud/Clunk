@@ -49,7 +49,7 @@ static void print_help_line() {
     attroff(COLOR_PAIR(1));
     printw("Create Note ");
     attron(COLOR_PAIR(1));
-    printw("F8");
+    printw("F9");
     attroff(COLOR_PAIR(1));
     printw("Delete Note ");
 
@@ -114,7 +114,7 @@ int main( int argc, char** argv ) {
                 storage_cleanup(&s);
                 get_notes_in_directory(&s);
                 break;
-            case KEY_F(8):
+            case KEY_F(9):
                 //todo add confirmation dialog
                 if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
                     break;
