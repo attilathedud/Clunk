@@ -5,7 +5,7 @@
 
 typedef struct {
     int file_count;
-    char *files[MAX_NOTES];
+    char **files;
     char *home_directory;
 } Storage;
 

@@ -115,6 +115,8 @@ int main( int argc, char** argv ) {
                 get_notes_in_directory(&s);
                 break;
             case KEY_F(8):
+                //todo fix delete on note above causing scroll issues
+                //todo add confirmation dialog
                 if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
                     break;
                 delete_note(&s, cur_selected_file_index);

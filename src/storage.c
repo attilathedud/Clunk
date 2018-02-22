@@ -73,6 +73,10 @@ void storage_cleanup( Storage *s ) {
         }
     }
 
+    if( s->files != NULL ) {
+        free( s->files );
+    }
+
     s->file_count = 0;
 }
 
@@ -86,6 +90,8 @@ int get_notes_in_directory( Storage *s ) {
     if( get_or_create_notes_directory(s, &dir) == -1 ) 
         return -1;
 
+    s->files = calloc( MAX_NOTES, sizeof(char*) );
+
     while ((dp = readdir (dir)) != NULL) {
         if( strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".DS_Store") == 0 )
             continue;
@@ -94,6 +100,12 @@ int get_notes_in_directory( Storage *s ) {
         strcpy(s->files[s->file_count], dp->d_name);
 
         s->file_count++;
+        if( s->file_count > MAX_NOTES - 1 ) {
+            char **temp_note_buffer = s->files;
+            s->files = calloc( s->file_count + MAX_NOTES, sizeof(char*));
+            memcpy(s->files, temp_note_buffer, (s->file_count) * sizeof(char*));
+            free(temp_note_buffer);
+        }
     }
 
     qsort( s->files, s->file_count, sizeof (char *), natural_sort );
@@ -108,9 +120,10 @@ int create_note( const Storage *s ) {
     if( s == NULL )
         return -1;
 
+    //todo fix digit allocation
     note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(note_prefix) + 2 + 1);
 
-    for( int i = 0; i < MAX_NOTES; i++ ) {
+    for( int i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
         if( ( temp_file = fopen(note_name, "r") ) ){
             fclose( temp_file );
