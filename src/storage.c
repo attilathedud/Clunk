@@ -120,7 +120,6 @@ int create_note( const Storage *s ) {
     if( s == NULL )
         return -1;
 
-    //todo fix digit allocation
     int digit_count = 0;
     int file_count = s->file_count;
     while( (file_count /= 10) > 0 ) {
