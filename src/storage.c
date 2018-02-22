@@ -121,7 +121,13 @@ int create_note( const Storage *s ) {
         return -1;
 
     //todo fix digit allocation
-    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(note_prefix) + 2 + 1);
+    int digit_count = 0;
+    int file_count = s->file_count;
+    while( (file_count /= 10) > 0 ) {
+        digit_count++;
+    }
+
+    note_name = calloc(1, strlen(s->home_directory) + strlen("/") + strlen(note_prefix) + digit_count + 1);
 
     for( int i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
@@ -140,6 +146,7 @@ int create_note( const Storage *s ) {
     return 0;
 }
 
+//todo fix crash when deleting lots of files
 int delete_note( const Storage *s, const int file_index ) {
     char *note_name;
 
