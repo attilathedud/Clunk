@@ -70,11 +70,13 @@ void storage_cleanup( Storage *s ) {
     for( int i = 0; i < s->file_count; i++ ) {
         if( s->files[ i ] != NULL ) {
             free( s->files[ i ] );
+            s->files[ i ] = NULL;
         }
     }
 
     if( s->files != NULL ) {
         free( s->files );
+        s->files = NULL;
     }
 
     s->file_count = 0;
@@ -105,6 +107,7 @@ int get_notes_in_directory( Storage *s ) {
             s->files = calloc( s->file_count + MAX_NOTES, sizeof(char*));
             memcpy(s->files, temp_note_buffer, (s->file_count) * sizeof(char*));
             free(temp_note_buffer);
+            temp_note_buffer = NULL;
         }
     }
 
@@ -114,8 +117,8 @@ int get_notes_in_directory( Storage *s ) {
 }
 
 int create_note( const Storage *s ) {
-    char *note_name;
-    FILE *temp_file;
+    char *note_name = NULL;
+    FILE *temp_file = NULL;
 
     if( s == NULL )
         return -1;
@@ -139,15 +142,18 @@ int create_note( const Storage *s ) {
             break;
         }
     }
-
-    free( note_name );
+ 
+    if( note_name != NULL ) {
+        free( note_name );
+        note_name = NULL;
+    }
 
     return 0;
 }
 
 //todo fix crash when deleting lots of files
 int delete_note( const Storage *s, const int file_index ) {
-    char *note_name;
+    char *note_name = NULL;
 
     if( s == NULL )
         return -1;
@@ -157,7 +163,10 @@ int delete_note( const Storage *s, const int file_index ) {
     sprintf(note_name, "%s/%s", s->home_directory, s->files[file_index]);
     remove( note_name );
 
-    free( note_name );
+    if( note_name != NULL ) {
+        free( note_name );
+        note_name = NULL;
+    }
 
     return 0;
 }

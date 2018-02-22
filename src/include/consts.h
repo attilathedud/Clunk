@@ -4,7 +4,7 @@
 #define MENU_OFFSET COLS / 4
 #define NOTES_OFFSET MENU_OFFSET + 2
 
-//todo: fix 64 limit
+//todo: rename to step note count
 #define MAX_NOTES 64
 
 #endif
