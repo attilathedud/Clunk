@@ -11,10 +11,10 @@ SOURCES = $(wildcard $(SOURCEDIR)/*.c) $(wildcard $(SOURCEDIR)/*/*.c)
 	$(CC) -c -o $@ $< $(LIBS)
 
 all: $(SOURCES)
-	mkdir -p build ; $(CC) -o build/notes $(SOURCES) $(LIBS)
+	mkdir -p build ; $(CC) -o build/clunk $(SOURCES) $(LIBS)
 
 debug: $(SOURCES)
-	mkdir -p debug ; $(CC) -o debug/notes_debug $(SOURCES) -g $(LIBS)
+	mkdir -p debug ; $(CC) -o debug/clunk_debug $(SOURCES) -g $(LIBS)
 
 .PHONY: clean
 
