@@ -108,8 +108,9 @@ int main( int argc, char** argv ) {
                 get_notes_in_directory(&s);
                 break;
             case KEY_F(8):
-                //todo: only allow if files
-                is_deleting_file = true;
+                if( s.file_count > 0 ) {
+                    is_deleting_file = true;
+                }
                 break;
             case KEY_LOWER_Y:
             case KEY_UPPER_Y:
