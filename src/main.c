@@ -26,14 +26,6 @@ void print_file( int index ) {
 }
 */
 
-static void print_file_selector( const int index ) {
-    mvhline(index * 2, 0, ACS_HLINE, MENU_OFFSET );
-    mvhline((index * 2) + 2, 0, ACS_HLINE, MENU_OFFSET );
-
-    mvvline( 0, MENU_OFFSET, ACS_VLINE, index * 2 );
-    mvvline((index * 2) + 3, MENU_OFFSET, ACS_VLINE, LINES - (index * 2) - 1);
-}
-
 static void print_help_line() {
     move( LINES - 1, 0 );
     attron(COLOR_PAIR(1));
@@ -116,6 +108,7 @@ int main( int argc, char** argv ) {
                 get_notes_in_directory(&s);
                 break;
             case KEY_F(8):
+                //todo: only allow if files
                 is_deleting_file = true;
                 break;
             case KEY_LOWER_Y:
@@ -148,16 +141,21 @@ int main( int argc, char** argv ) {
         }
 
         for( int i = 0; i + note_selection_scroll_offset < s.file_count; i++ ) {
-            mvprintw((i * 2) + 1, 1, s.files[ i + note_selection_scroll_offset ]);
+            if( i + note_selection_scroll_offset == cur_selected_file_index ) {
+                attron(COLOR_PAIR(1));
+                move((i * 2) + 1, 5);
+                printw(" ");
+                printw(s.files[ i + note_selection_scroll_offset ]);
+                printw(" ");
+                attroff(COLOR_PAIR(1));
+            }
+            else {
+                mvprintw((i * 2) + 1, 1, s.files[ i + note_selection_scroll_offset ]);
+            }
         }
 
-        if( s.file_count > 0 && cur_selected_file_index < s.file_count) {
-            print_file_selector(cur_selected_file_index - note_selection_scroll_offset);
-        }
-        else {
-            mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
-        }
-
+        // print separator line
+        mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
         print_help_line();
 
         if( is_deleting_file ) {

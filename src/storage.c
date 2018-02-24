@@ -12,6 +12,7 @@
 
 static const char* note_prefix = "note_";
 
+//todo: fix magic numbers
 static int natural_sort( const void *a, const void *b )
 {
     char a_buffer[6] = { 0 };
