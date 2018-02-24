@@ -73,6 +73,12 @@ int main( int argc, char** argv ) {
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
+    if( s.file_count == 0 ) {
+        create_note(&s);
+        storage_cleanup(&s);
+        get_notes_in_directory(&s);
+    }
+
     do {
         erase();
 
