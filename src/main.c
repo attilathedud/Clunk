@@ -49,7 +49,7 @@ static void print_help_line() {
     attroff(COLOR_PAIR(1));
     printw("Create Note ");
     attron(COLOR_PAIR(1));
-    printw("F9");
+    printw("F8");
     attroff(COLOR_PAIR(1));
     printw("Delete Note ");
 
@@ -64,6 +64,7 @@ int main( int argc, char** argv ) {
     int ch = 0;
     int cur_selected_file_index = 0;
     int note_selection_scroll_offset = 0;
+    int is_deleting_file = false;
 
     Storage s = { 0 };
 
@@ -114,26 +115,35 @@ int main( int argc, char** argv ) {
                 storage_cleanup(&s);
                 get_notes_in_directory(&s);
                 break;
-            case KEY_F(9):
-                //todo add confirmation dialog
-                if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
-                    break;
+            case KEY_F(8):
+                is_deleting_file = true;
+                break;
+            case KEY_LOWER_Y:
+            case KEY_UPPER_Y:
+                if( is_deleting_file ) {
+                    if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
+                        break;
 
-                delete_note(&s, cur_selected_file_index);
-                storage_cleanup(&s);
-                get_notes_in_directory(&s);
+                    delete_note(&s, cur_selected_file_index);
+                    storage_cleanup(&s);
+                    get_notes_in_directory(&s);
 
-                if( cur_selected_file_index > s.file_count - 1 ) {
-                    cur_selected_file_index = ( s.file_count - 1 < 0 ) ? 0 : s.file_count - 1;
+                    if( cur_selected_file_index > s.file_count - 1 ) {
+                        cur_selected_file_index = ( s.file_count - 1 < 0 ) ? 0 : s.file_count - 1;
+                    }
+
+                    if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 2 ) {
+                        note_selection_scroll_offset--;
+                    }
+
+                    if( note_selection_scroll_offset < 0 ) {
+                        note_selection_scroll_offset = 0;
+                    }
                 }
-
-                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 2 ) {
-                    note_selection_scroll_offset--;
-                }
-
-                if( note_selection_scroll_offset < 0 ) {
-                    note_selection_scroll_offset = 0;
-                }
+                is_deleting_file = false;
+                break;
+            default:
+                is_deleting_file = false;
                 break;
         }
 
@@ -149,6 +159,12 @@ int main( int argc, char** argv ) {
         }
 
         print_help_line();
+
+        if( is_deleting_file ) {
+            attron(COLOR_PAIR(1));
+            mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
+            attroff(COLOR_PAIR(1));
+        }
 
         move( 0, NOTES_OFFSET );
     } while( ( ch = getch( ) ) != KEY_F(10) );
