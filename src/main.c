@@ -3,6 +3,7 @@
 
 #include "include/consts.h"
 #include "include/menu.h"
+#include "include/editor.h"
 
 
 /*
@@ -54,6 +55,7 @@ static void print_help_line() {
 
 int main( int argc, char** argv ) {
     int ch = 0;
+    Menu m = { { 0 } };
 
     initscr( );
     noecho( );
@@ -64,7 +66,7 @@ int main( int argc, char** argv ) {
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
-    if( init_menu() == -1 ) {
+    if( init_menu(&m) == -1 ) {
         refresh();
         endwin();
         fprintf( stderr, "Error getting the notes directory.\n" );
@@ -74,18 +76,18 @@ int main( int argc, char** argv ) {
     do {
         erase();
 
-        menu_handle_input(ch);
+        menu_handle_input(&m, ch);
+
+        print_menu(&m);
 
         // print separator line
         mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
         print_help_line();
-
-        print_menu();
-
+        
         move( 0, NOTES_OFFSET );
     } while( ( ch = getch( ) ) != KEY_F(10) );
 
-    menu_cleanup();
+    menu_cleanup(&m);
 
     refresh( );
     endwin( );

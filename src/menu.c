@@ -1,117 +1,118 @@
 #include <ncurses.h>
 
-#include "include/menu.h"
+#include "include/consts.h"
 #include "include/storage.h"
+#include "include/menu.h"
 
-static Storage s = { 0 };
+int init_menu( Menu *m ) {
+    if( m == NULL )
+        return -1;
 
-static int cur_selected_file_index = 0;
-static int note_selection_scroll_offset = 0;
-static int is_deleting_file = 0;
-
-int init_menu() {
-    if( get_notes_in_directory(&s) == -1 ) {
+    if( get_notes_in_directory(&(m->s)) == -1 ) {
         return -1;
     }
 
-    if( s.file_count == 0 ) {
-        create_note(&s);
-        storage_cleanup(&s);
-        get_notes_in_directory(&s);
+    if( m->s.file_count == 0 ) {
+        create_note(&(m->s));
+        storage_cleanup(&(m->s));
+        get_notes_in_directory(&(m->s));
     }
 
     return 0;
 }
 
-void menu_handle_input( const int ch ) {
+void menu_handle_input( Menu *m, const int ch ) {
+    if( m == NULL )
+        return;
+
     switch( ch ) {
         case KEY_F(1):
-            cur_selected_file_index--;
-            if( cur_selected_file_index < 0 ) {
-                cur_selected_file_index = s.file_count - 1;
-                note_selection_scroll_offset = s.file_count + 1 - LINES / 2;
-                if( note_selection_scroll_offset < 0 ) {
-                    note_selection_scroll_offset = 0;
+            m->selected_file_index--;
+            if( m->selected_file_index < 0 ) {
+                m->selected_file_index = m->s.file_count - 1;
+                m->scroll_offset = m->s.file_count + 1 - LINES / 2;
+                if( m->scroll_offset < 0 ) {
+                    m->scroll_offset = 0;
                 }
             }
 
-            if( cur_selected_file_index - note_selection_scroll_offset < 0 ) {
-                note_selection_scroll_offset--;
+            if( m->selected_file_index - m->scroll_offset < 0 ) {
+                m->scroll_offset--;
             }
             break;
         case KEY_F(2):
-            cur_selected_file_index++;
-            if( cur_selected_file_index > s.file_count - 1 ) {
-                cur_selected_file_index = 0;
-                note_selection_scroll_offset = 0;
+            m->selected_file_index++;
+            if( m->selected_file_index > m->s.file_count - 1 ) {
+                m->selected_file_index = 0;
+                m->scroll_offset = 0;
             }
 
-            if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 > LINES - 1 ) {
-                note_selection_scroll_offset++;
+            if( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 > LINES - 1 ) {
+                m->scroll_offset++;
             }
             break;
         case KEY_F(5):
-            create_note(&s);
-            storage_cleanup(&s);
-            get_notes_in_directory(&s);
+            create_note(&(m->s));
+            storage_cleanup(&(m->s));
+            get_notes_in_directory(&(m->s));
             break;
         case KEY_F(8):
-            if( s.file_count > 0 ) {
-                is_deleting_file = true;
+            if( m->s.file_count > 0 ) {
+                m->is_deleting_file = true;
             }
             break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:
-            if( is_deleting_file ) {
-                if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
+            if( m->is_deleting_file ) {
+                if( m->selected_file_index < 0 || m->selected_file_index > m->s.file_count - 1 )
                     break;
 
-                delete_note(&s, cur_selected_file_index);
-                storage_cleanup(&s);
-                get_notes_in_directory(&s);
+                delete_note(&(m->s), m->selected_file_index);
+                storage_cleanup(&(m->s));
+                get_notes_in_directory(&(m->s));
 
-                if( cur_selected_file_index > s.file_count - 1 ) {
-                    cur_selected_file_index = ( s.file_count - 1 < 0 ) ? 0 : s.file_count - 1;
+                if( m->selected_file_index > m->s.file_count - 1 ) {
+                    m->selected_file_index = ( m->s.file_count - 1 < 0 ) ? 0 : m->s.file_count - 1;
                 }
 
-                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 2 ) {
-                    note_selection_scroll_offset--;
+                if( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 < LINES - 2 ) {
+                    m->scroll_offset--;
                 }
 
-                if( note_selection_scroll_offset < 0 ) {
-                    note_selection_scroll_offset = 0;
+                if( m->scroll_offset < 0 ) {
+                    m->scroll_offset = 0;
                 }
             }
-            is_deleting_file = false;
+            m->is_deleting_file = false;
             break;
         default:
-            is_deleting_file = false;
+            m->is_deleting_file = false;
             break;
     }
 }
 
-void print_menu() {
-    for( int i = 0; i + note_selection_scroll_offset < s.file_count; i++ ) {
-        if( i + note_selection_scroll_offset == cur_selected_file_index ) {
+void print_menu( Menu *m ) {
+    for( int i = 0; i + m->scroll_offset < m->s.file_count; i++ ) {
+        if( i + m->scroll_offset == m->selected_file_index ) {
             attron(COLOR_PAIR(1));
             move((i * 2) + 1, 5);
             printw(" ");
-            printw(s.files[ i + note_selection_scroll_offset ]);
+            printw(m->s.files[ i + m->scroll_offset ]);
             printw(" ");
             attroff(COLOR_PAIR(1));
         }
         else {
-            mvprintw((i * 2) + 1, 1, s.files[ i + note_selection_scroll_offset ]);
+            mvprintw((i * 2) + 1, 1, m->s.files[ i + m->scroll_offset ]);
         }
     }
 
-    if( is_deleting_file ) {
+    if( m->is_deleting_file ) {
         attron(COLOR_PAIR(1));
         mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
         attroff(COLOR_PAIR(1));
     }
 }
 
-void menu_cleanup() {
-    storage_cleanup(&s);
+void menu_cleanup( Menu *m ) {
+    storage_cleanup(&(m->s));
 }
