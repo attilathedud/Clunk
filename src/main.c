@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "include/consts.h"
-#include "include/storage.h"
+#include "include/menu.h"
 
 
 /*
@@ -54,15 +54,6 @@ static void print_help_line() {
 
 int main( int argc, char** argv ) {
     int ch = 0;
-    int cur_selected_file_index = 0;
-    int note_selection_scroll_offset = 0;
-    int is_deleting_file = false;
-
-    Storage s = { 0 };
-
-    if( get_notes_in_directory(&s) == -1 ) {
-         fprintf( stderr, "Error getting the notes directory" );
-    }
 
     initscr( );
     noecho( );
@@ -73,108 +64,28 @@ int main( int argc, char** argv ) {
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
-    if( s.file_count == 0 ) {
-        create_note(&s);
-        storage_cleanup(&s);
-        get_notes_in_directory(&s);
+    if( init_menu() == -1 ) {
+        refresh();
+        endwin();
+        fprintf( stderr, "Error getting the notes directory.\n" );
+        return -1;
     }
 
     do {
         erase();
 
-        switch( ch ) {            
-            case KEY_F(1):
-                cur_selected_file_index--;
-                if( cur_selected_file_index < 0 ) {
-                    cur_selected_file_index = s.file_count - 1;
-                    note_selection_scroll_offset = s.file_count + 1 - LINES / 2;
-                    if( note_selection_scroll_offset < 0 ) {
-                        note_selection_scroll_offset = 0;
-                    }
-                }
-
-                if( cur_selected_file_index - note_selection_scroll_offset < 0 ) {
-                    note_selection_scroll_offset--;
-                }
-                break;
-            case KEY_F(2):
-                cur_selected_file_index++;
-                if( cur_selected_file_index > s.file_count - 1 ) {
-                    cur_selected_file_index = 0;
-                    note_selection_scroll_offset = 0;
-                }
-
-                if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 > LINES - 1 ) {
-                    note_selection_scroll_offset++;
-                }
-                break;
-            case KEY_F(5):
-                create_note(&s);
-                storage_cleanup(&s);
-                get_notes_in_directory(&s);
-                break;
-            case KEY_F(8):
-                if( s.file_count > 0 ) {
-                    is_deleting_file = true;
-                }
-                break;
-            case KEY_LOWER_Y:
-            case KEY_UPPER_Y:
-                if( is_deleting_file ) {
-                    if( cur_selected_file_index < 0 || cur_selected_file_index > s.file_count - 1 )
-                        break;
-
-                    delete_note(&s, cur_selected_file_index);
-                    storage_cleanup(&s);
-                    get_notes_in_directory(&s);
-
-                    if( cur_selected_file_index > s.file_count - 1 ) {
-                        cur_selected_file_index = ( s.file_count - 1 < 0 ) ? 0 : s.file_count - 1;
-                    }
-
-                    if( ( cur_selected_file_index - note_selection_scroll_offset + 1 ) * 2 < LINES - 2 ) {
-                        note_selection_scroll_offset--;
-                    }
-
-                    if( note_selection_scroll_offset < 0 ) {
-                        note_selection_scroll_offset = 0;
-                    }
-                }
-                is_deleting_file = false;
-                break;
-            default:
-                is_deleting_file = false;
-                break;
-        }
-
-        for( int i = 0; i + note_selection_scroll_offset < s.file_count; i++ ) {
-            if( i + note_selection_scroll_offset == cur_selected_file_index ) {
-                attron(COLOR_PAIR(1));
-                move((i * 2) + 1, 5);
-                printw(" ");
-                printw(s.files[ i + note_selection_scroll_offset ]);
-                printw(" ");
-                attroff(COLOR_PAIR(1));
-            }
-            else {
-                mvprintw((i * 2) + 1, 1, s.files[ i + note_selection_scroll_offset ]);
-            }
-        }
+        menu_handle_input(ch);
 
         // print separator line
         mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
         print_help_line();
 
-        if( is_deleting_file ) {
-            attron(COLOR_PAIR(1));
-            mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
-            attroff(COLOR_PAIR(1));
-        }
+        print_menu();
 
         move( 0, NOTES_OFFSET );
     } while( ( ch = getch( ) ) != KEY_F(10) );
 
-    storage_cleanup(&s);
+    menu_cleanup();
 
     refresh( );
     endwin( );
