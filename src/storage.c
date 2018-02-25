@@ -10,20 +10,21 @@
 #include "include/storage.h"
 #include "include/consts.h"
 
+#define PREFIX_LENGTH 6
+
 static const char* note_prefix = "note_";
 
-//todo: fix magic numbers
 static int natural_sort( const void *a, const void *b )
 {
-    char a_buffer[6] = { 0 };
-    char b_buffer[6] = { 0 };
+    char a_buffer[PREFIX_LENGTH] = { 0 };
+    char b_buffer[PREFIX_LENGTH] = { 0 };
 
     strncpy(a_buffer, *(const char**)a, strlen(note_prefix));
     strncpy(b_buffer, *(const char**)b, strlen(note_prefix));
 
     if( strcmp(a_buffer, note_prefix) == 0 && strcmp(b_buffer, note_prefix) == 0 ) {
-        memset(a_buffer, 0, 6);
-        memset(b_buffer, 0, 6);
+        memset(a_buffer, 0, sizeof(a_buffer));
+        memset(b_buffer, 0, sizeof(b_buffer));
 
         memcpy(a_buffer, *(const char**)a + strlen(note_prefix), strlen(*(const char**)a) - strlen(note_prefix));
         memcpy(b_buffer, *(const char**)b + strlen(note_prefix), strlen(*(const char**)b) - strlen(note_prefix));
@@ -47,7 +48,7 @@ static int get_or_create_notes_directory( Storage *s, DIR **dir ) {
         if( s->home_directory == NULL ) 
             return -1;
 
-        strcat(s->home_directory, "/.terminalnotes");
+        strcat(s->home_directory, "/.clunk");
     }
 
     *dir = opendir( s->home_directory );
