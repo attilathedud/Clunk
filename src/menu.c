@@ -24,7 +24,7 @@ int init_menu() {
 }
 
 void menu_handle_input( const int ch ) {
-    switch( ch ) {            
+    switch( ch ) {
         case KEY_F(1):
             cur_selected_file_index--;
             if( cur_selected_file_index < 0 ) {
