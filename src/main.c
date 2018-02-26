@@ -5,28 +5,6 @@
 #include "include/menu.h"
 #include "include/editor.h"
 
-
-/*
-void print_file( int index ) {
-    int c = 0;
-    int col = 0;
-
-    FILE *fptr = NULL;
-
-    fptr = fopen(files[index], "r");
-    if( fptr == NULL ) {
-        return;
-    }
-
-    while((c = fgetc(fptr)) != EOF) {
-        mvprintw( 4, col, &c );
-        col++;
-    }
-
-    fclose(fptr);
-}
-*/
-
 static void print_help_line() {
     move( LINES - 1, 0 );
     attron(COLOR_PAIR(1));
@@ -55,7 +33,9 @@ static void print_help_line() {
 
 int main( int argc, char** argv ) {
     int ch = 0;
+
     Menu m = { { 0 } };
+    Editor e = { { 0 } };
 
     initscr( );
     noecho( );
@@ -66,19 +46,25 @@ int main( int argc, char** argv ) {
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
-    if( init_menu(&m) == -1 ) {
+    if( menu_init(&m) == -1 ) {
         refresh();
         endwin();
         fprintf( stderr, "Error getting the notes directory.\n" );
         return -1;
     }
 
+    editor_load_file( &e, m.s.home_directory, m.s.files[ 0 ] );
+
     do {
         erase();
 
         menu_handle_input(&m, ch);
+        if( m.has_changed_file ) {
+            editor_load_file( &e, m.s.home_directory, m.s.files[ m.selected_file_index ] );
+        }
 
-        print_menu(&m);
+        editor_print(&e);
+        menu_print(&m);
 
         // print separator line
         mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );

@@ -59,7 +59,6 @@ static int get_or_create_notes_directory( Storage *s, DIR **dir ) {
         *dir = opendir( s->home_directory );
         if( *dir == NULL ) 
             return -1;
-        
     }
 
     return 0;
@@ -84,7 +83,7 @@ void storage_cleanup( Storage *s ) {
     s->file_count = 0;
 }
 
-int get_notes_in_directory( Storage *s ) {
+int storage_get_notes( Storage *s ) {
     DIR *dir = NULL;
     struct dirent *dp;   
 
@@ -118,7 +117,7 @@ int get_notes_in_directory( Storage *s ) {
     return 0;
 }
 
-int create_note( const Storage *s ) {
+int storage_create_note( const Storage *s ) {
     char *note_name = NULL;
     FILE *temp_file = NULL;
 
@@ -154,7 +153,7 @@ int create_note( const Storage *s ) {
 }
 
 //todo fix crash when deleting lots of files
-int delete_note( const Storage *s, const int file_index ) {
+int storage_delete_note( const Storage *s, const int file_index ) {
     char *note_name = NULL;
 
     if( s == NULL )
