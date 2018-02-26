@@ -44,16 +44,20 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
 }
 
 void editor_print( Editor *e ) {
+    int output_line = 0;
+
     if( e == NULL )
         return;
 
     node_t *iter = e->b.head;
     while( iter != NULL ) {
         if( iter->text != NULL ) {
-            mvprintw( 0, NOTES_OFFSET, iter->text );
+            mvprintw( output_line, NOTES_OFFSET, iter->text );
         }
 
         clrtoeol();
+
+        output_line++;
         iter = iter->next;
     }
 }
