@@ -58,7 +58,11 @@ int main( int argc, char** argv ) {
     do {
         erase();
 
-        menu_handle_input(&m, ch);
+        // if the menu is controlled, don't pass input to editor
+        if( menu_handle_input(&m, ch) == 1 ) {
+            editor_handle_input(&e, ch);
+        }
+
         if( m.has_changed_file ) {
             editor_load_file( &e, m.s.home_directory, m.s.files[ m.selected_file_index ] );
         }
@@ -70,7 +74,7 @@ int main( int argc, char** argv ) {
         mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
         print_help_line();
         
-        move( 0, NOTES_OFFSET );
+        editor_print_cursor(&e);
     } while( ( ch = getch( ) ) != KEY_F(10) );
 
     menu_cleanup(&m);

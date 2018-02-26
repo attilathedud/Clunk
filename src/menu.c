@@ -21,11 +21,11 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
-void menu_handle_input( Menu *m, const int ch ) {
-    if( m == NULL )
-        return;
+int menu_handle_input( Menu *m, const int ch ) {
+    int pass_input_to_editor = false;
 
-     m->has_changed_file = false;
+    if( m == NULL )
+        return -1;
 
     switch( ch ) {
         case KEY_F(1):
@@ -96,8 +96,12 @@ void menu_handle_input( Menu *m, const int ch ) {
             break;
         default:
             m->is_deleting_file = false;
+            m->has_changed_file = false;
+            pass_input_to_editor = true;
             break;
     }
+
+    return pass_input_to_editor;
 }
 
 void menu_print( Menu *m ) {

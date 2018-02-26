@@ -12,7 +12,7 @@ typedef struct {
 } Menu;
 
 int menu_init( Menu * );
-void menu_handle_input( Menu *, const int );
+int menu_handle_input( Menu *, const int );
 void menu_print( Menu * );
 void menu_cleanup( Menu * );
 

@@ -11,6 +11,10 @@ void editor_cleanup( Editor *e ) {
         return;
 
     buffer_cleanup(&(e->b));
+
+    e->x = NOTES_OFFSET;
+    e->y = 0;
+    e->scroll_offset = 0;
 }
 
 void editor_load_file( Editor *e, const char *home_directory, const char *file ) {
@@ -26,7 +30,7 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
     strcat(file_path, "/");
     strcat(file_path, file);
 
-    buffer_cleanup(&(e->b));
+    editor_cleanup(e);
 
     f = fopen(file_path, "r");
     if( f == NULL ) {
@@ -43,6 +47,34 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
         free( file_path );
 }
 
+void editor_handle_input( Editor *e, const int ch ) {
+    if( e == NULL )
+        return;
+
+    switch( ch ) {
+        case KEY_UP:
+            if( e->y > 0 ) {
+                e->y--;
+            }
+            break;
+        case KEY_DOWN:
+            if( e->y < LINES - 2 ) {
+                e->y++;
+            }
+            break;
+        case KEY_LEFT:
+            if( e->x > NOTES_OFFSET ) {
+                e->x--;
+            }
+            break;
+        case KEY_RIGHT:
+            if( e->x < COLS - 1) {
+                e->x++;
+            }
+            break;
+    }
+}
+
 void editor_print( Editor *e ) {
     int output_line = 0;
 
@@ -50,6 +82,12 @@ void editor_print( Editor *e ) {
         return;
 
     node_t *iter = e->b.head;
+
+    for( int i = 0; i < e->scroll_offset && iter->next != NULL; i++ )
+    {
+        iter = iter->next;
+    }
+
     while( iter != NULL ) {
         if( iter->text != NULL ) {
             mvprintw( output_line, NOTES_OFFSET, iter->text );
@@ -60,4 +98,11 @@ void editor_print( Editor *e ) {
         output_line++;
         iter = iter->next;
     }
+}
+
+void editor_print_cursor( Editor *e ) {
+    if( e == NULL )
+        return;
+
+    move(e->y, e->x);
 }
