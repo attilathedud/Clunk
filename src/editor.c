@@ -33,9 +33,8 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
     editor_cleanup(e);
 
     f = fopen(file_path, "r");
-    if( f == NULL ) {
+    if( f == NULL )
         return;
-    }
 
     while( ( line = fgetln( f, &len ) ) != NULL ) {
         buffer_append_line( &(e->b), line, len );
@@ -53,58 +52,38 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     switch( ch ) {
         case KEY_UP:
-            if( e->y > 0 ) {
-                e->y--;
-            }
-            else if( e->scroll_offset > 0 ) {
-                e->scroll_offset--;
-            }
+            if( e->y > 0 ) e->y--;
+            else if( e->scroll_offset > 0 ) e->scroll_offset--;
 
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
             break;
         case KEY_DOWN:
-            if( e->y < LINES - 2 ) {
-                e->y++;
-            }
-            else {
-                e->scroll_offset++;
-            }
+            if( e->y < LINES - 2 ) e->y++;
+            else e->scroll_offset++;
 
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
             break;
         case KEY_LEFT:
-            if( e->x > NOTES_OFFSET ) {
-                e->x--;
-            }
+            if( e->x > NOTES_OFFSET ) { e->x--; }
             else {
                 if( e->y + e->scroll_offset > 0 ) {
                     e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET - 1;
                 }
-                if( e->y > 0 ) {
-                    e->y--;
-                }
-                else if( e->scroll_offset > 0 ) {
-                    e->scroll_offset--;
-                }
+                if( e->y > 0 ) e->y--;
+                else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
         case KEY_RIGHT:
             if( e->x > COLS - 1 || e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 2) {
                 e->x = NOTES_OFFSET;
-                if( e->y < LINES - 2 ) {
-                    e->y++;
-                }
-                else {
-                    e->scroll_offset++;
-                }
+                if( e->y < LINES - 2 ) e->y++;
+                else e->scroll_offset++; 
             }
-            else {
-                e->x++;
-            }
+            else e->x++;
             break;
     }
 }
@@ -117,8 +96,7 @@ void editor_print( Editor *e ) {
 
     node_t *iter = e->b.head;
 
-    for( int i = 0; i < e->scroll_offset && iter->next != NULL; i++ )
-    {
+    for( int i = 0; i < e->scroll_offset && iter->next != NULL; i++ ) {
         iter = iter->next;
     }
 
