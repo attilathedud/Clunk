@@ -5,10 +5,11 @@
 #include "include/buffer.h"
 
 void buffer_cleanup( Buffer *b ) {
+    node_t *previous = NULL;
+    
     if( b == NULL )
         return;
 
-    node_t *previous = NULL;
     b->current = b->head;
 
     while( b->current != NULL )
@@ -32,6 +33,32 @@ void buffer_cleanup( Buffer *b ) {
     b->current = NULL;
 }
 
+static void buffer_set_current_node( Buffer *b, const int index ) {
+    if( b == NULL )
+        return;
+
+    b->current = b->head;
+    for( int i = 0; i < index; i++ ) {
+        if( b->current->next == NULL ) {
+            buffer_append_line( b, NULL, 0 );
+        }
+        else {
+            b->current = b->current->next;
+        }
+    }
+}
+
+size_t buffer_get_text_len( Buffer *b, const int index ) {
+    if( b == NULL )
+        return 1;
+
+    buffer_set_current_node( b, index );
+    if( b->current->text == NULL )
+        return 1;
+
+    return strlen(b->current->text);
+}
+
 void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
     if( b == NULL ) 
         return;
@@ -40,8 +67,10 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
     if( new_node == NULL )
         return;
 
-    new_node->text = calloc( len + 1, sizeof( char ) );
-    strncpy( new_node->text, line, len );
+    if( len > 0 && line != NULL ) {
+        new_node->text = calloc( len + 1, sizeof( char ) );
+        strncpy( new_node->text, line, len );
+    }
 
     if( b->head == NULL ) {
         b->head = new_node;

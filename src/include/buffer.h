@@ -13,5 +13,7 @@ typedef struct {
 
 void buffer_cleanup( Buffer * );
 void buffer_append_line( Buffer *, const char *, const size_t );
+size_t buffer_get_text_len( Buffer *, const int );
+//todo: change index to size_t to account for large files
 
 #endif
