@@ -1,6 +1,8 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#define LINE_ALLOC_STEP 128
+
 typedef struct node {
     char *text;
     struct node *next;

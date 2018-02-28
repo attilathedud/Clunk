@@ -1,7 +1,7 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#include "consts.h"
+#define NOTES_ALLOC_STEP 64
 
 typedef struct {
     int file_count;
