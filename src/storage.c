@@ -117,6 +117,7 @@ int storage_get_notes( Storage *s ) {
     return 0;
 }
 
+//todo properly alloc notename sizeof char
 int storage_create_note( const Storage *s ) {
     char *note_name = NULL;
     FILE *temp_file = NULL;
@@ -153,6 +154,7 @@ int storage_create_note( const Storage *s ) {
 }
 
 //todo fix crash when deleting lots of files
+//todo properly alloc notename sizeof char
 int storage_delete_note( const Storage *s, const int file_index ) {
     char *note_name = NULL;
 

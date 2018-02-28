@@ -3,6 +3,26 @@
 #include <string.h>
 
 #include "include/buffer.h"
+#include "include/consts.h"
+
+static void buffer_set_current_node( Buffer *b, const int index ) {
+    if( b == NULL )
+        return;
+
+    if( b->head == NULL ) {
+        b->head = calloc( 1, sizeof( node_t ) );
+    }
+
+    b->current = b->head;
+    for( int i = 0; i < index; i++ ) {
+        if( b->current->next == NULL ) {
+            buffer_append_line( b, NULL, 0 );
+        }
+        else {
+            b->current = b->current->next;
+        }
+    }
+}
 
 void buffer_cleanup( Buffer *b ) {
     node_t *previous = NULL;
@@ -31,21 +51,6 @@ void buffer_cleanup( Buffer *b ) {
 
     b->head = NULL;
     b->current = NULL;
-}
-
-static void buffer_set_current_node( Buffer *b, const int index ) {
-    if( b == NULL )
-        return;
-
-    b->current = b->head;
-    for( int i = 0; i < index; i++ ) {
-        if( b->current->next == NULL ) {
-            buffer_append_line( b, NULL, 0 );
-        }
-        else {
-            b->current = b->current->next;
-        }
-    }
 }
 
 size_t buffer_get_text_len( Buffer *b, const int index ) {
@@ -80,4 +85,24 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
         b->current->next = new_node;
         b->current = b->current->next;
     }
+}
+
+//todo: alloc memory if we overflow
+void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {
+    
+    if( b == NULL )
+        return;
+
+    buffer_set_current_node( b, index );
+    if( b->current->text == NULL ) {
+        b->current->text = calloc( LINE_ALLOC_STEP, sizeof( char ) );
+    }
+
+    for( int i = 0; i < x; i++ ) {
+        if( b->current->text[ i ] == 0 ) {
+            b->current->text[ i ] = ' ';
+        }
+    }
+
+    b->current->text[ x ] = ch;
 }

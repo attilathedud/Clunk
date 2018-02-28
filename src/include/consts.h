@@ -8,5 +8,6 @@
 #define NOTES_OFFSET MENU_OFFSET + 2
 
 #define NOTES_ALLOC_STEP 64
+#define LINE_ALLOC_STEP 128
 
 #endif

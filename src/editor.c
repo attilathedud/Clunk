@@ -85,6 +85,10 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
+        default:
+            buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
+            e->x++;
+            break;
     }
 }
 
@@ -102,6 +106,7 @@ void editor_print( Editor *e ) {
 
     while( iter != NULL ) {
         if( iter->text != NULL ) {
+            //todo if line longer than terminal, break to next line
             mvprintw( output_line, NOTES_OFFSET, iter->text );
         }
 
