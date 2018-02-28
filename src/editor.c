@@ -94,6 +94,7 @@ void editor_handle_input( Editor *e, const int ch ) {
 
 void editor_print( Editor *e ) {
     int output_line = 0;
+    int output_offset = 0;
 
     if( e == NULL )
         return;
@@ -104,17 +105,33 @@ void editor_print( Editor *e ) {
         iter = iter->next;
     }
 
+    char *buffer = calloc( COLS, sizeof( char ));
+
     while( iter != NULL ) {
         if( iter->text != NULL ) {
-            //todo if line longer than terminal, break to next line
-            mvprintw( output_line, NOTES_OFFSET, iter->text );
+            //todo fix magic numbers
+            //todo fix cursor pos
+            if( strlen(iter->text) > COLS - 1 - NOTES_OFFSET - 4 ) {
+                for( int i = 0; i < strlen( iter->text ); i += COLS - 1 - NOTES_OFFSET  - 4, output_offset++ ) {
+                    strncpy( buffer, iter->text + i, COLS - 1 - NOTES_OFFSET - 4 );
+                    buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
+                    mvprintw(output_line + output_offset, NOTES_OFFSET, buffer);
+                }
+            }
+            else {
+                mvprintw( output_line, NOTES_OFFSET, iter->text );
+            }
         }
 
         clrtoeol();
 
         output_line++;
+        output_line += output_offset;
         iter = iter->next;
+        output_offset = 0;
     }
+
+    free( buffer );
 }
 
 void editor_print_cursor( Editor *e ) {
