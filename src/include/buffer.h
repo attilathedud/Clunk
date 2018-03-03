@@ -5,6 +5,7 @@
 
 typedef struct node {
     char *text;
+    int allocs;
     struct node *next;
 } node_t;
 

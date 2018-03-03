@@ -103,6 +103,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             break;
         default:
             // todo: fix insert on multiple lines
+            // todo: fix scrolling insert
             buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
             e->x++;
             break;
