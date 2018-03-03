@@ -32,8 +32,7 @@ void buffer_cleanup( Buffer *b ) {
 
     b->current = b->head;
 
-    while( b->current != NULL )
-    {
+    while( b->current != NULL ) {
         if( previous != NULL )
             free( previous );
 
@@ -89,7 +88,6 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
 
 //todo: alloc memory if we overflow
 void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {
-    
     if( b == NULL )
         return;
 

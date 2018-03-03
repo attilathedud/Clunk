@@ -119,22 +119,20 @@ void editor_print( Editor *e ) {
     char *buffer = calloc( COLS, sizeof( char ));
 
     while( iter != NULL ) {
-        if( iter->text == NULL ) 
-            break;
-        
-        //todo fix magic numbers
-        //todo fix cursor pos
-        if( strlen(iter->text) > COLS - 1 - NOTES_OFFSET - 4 ) {
-            for( int i = 0; i < strlen( iter->text ); i += COLS - 1 - NOTES_OFFSET  - 4, output_offset++ ) {
-                strncpy( buffer, iter->text + i, COLS - 1 - NOTES_OFFSET - 4 );
-                buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
-                mvprintw(output_line + output_offset, NOTES_OFFSET, buffer);
+        if( iter->text != NULL ) {
+            //todo fix magic numbers
+            //todo fix cursor pos
+            if( strlen(iter->text) > COLS - 1 - NOTES_OFFSET - 4 ) {
+                for( int i = 0; i < strlen( iter->text ); i += COLS - 1 - NOTES_OFFSET  - 4, output_offset++ ) {
+                    strncpy( buffer, iter->text + i, COLS - 1 - NOTES_OFFSET - 4 );
+                    buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
+                    mvprintw(output_line + output_offset, NOTES_OFFSET, buffer);
+                }
+            }
+            else {
+                mvprintw( output_line, NOTES_OFFSET, iter->text );
             }
         }
-        else {
-            mvprintw( output_line, NOTES_OFFSET, iter->text );
-        }
-
         clrtoeol();
 
         output_line++;
