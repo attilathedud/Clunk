@@ -102,6 +102,7 @@ int storage_get_notes( Storage *s ) {
         s->files[s->file_count] = calloc(1, strlen(dp->d_name) + 1);
         strcpy(s->files[s->file_count], dp->d_name);
 
+        // todo: fix alloc bug, will allocate for every note past 64
         s->file_count++;
         if( s->file_count > NOTES_ALLOC_STEP - 1 ) {
             char **temp_note_buffer = s->files;

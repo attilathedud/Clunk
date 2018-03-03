@@ -94,9 +94,9 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
         return;
 
     buffer_set_current_node( b, index );
-    if( b->current->text == NULL ) {
+    if( b->current->text == NULL )
         b->current->text = calloc( LINE_ALLOC_STEP, sizeof( char ) );
-    }
+    
 
     for( int i = 0; i < x; i++ ) {
         if( b->current->text[ i ] == 0 ) {
@@ -105,4 +105,19 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
     }
 
     b->current->text[ x ] = ch;
+}
+
+void buffer_remove_character( Buffer *b, const int x, const int index ) {
+    if( b == NULL )
+        return;
+
+    buffer_set_current_node( b, index );
+    if( b->current->text == NULL )
+        return;
+
+    for( int i = x - 1; i < strlen( b->current->text ); i++ ) {
+        b->current->text[ i ] = b->current->text[ i + 1 ];
+    }
+
+    b->current->text[ strlen( b->current->text ) ] = 0;
 }

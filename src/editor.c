@@ -87,6 +87,15 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
+        case KEY_DELETE:
+            if( e->x == NOTES_OFFSET && e->y == 0 ) 
+                break;
+            
+            if( e->x > NOTES_OFFSET ) {
+                buffer_remove_character( &(e->b), e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
+                e->x--;
+            }
+            break;
         default:
             buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
             e->x++;

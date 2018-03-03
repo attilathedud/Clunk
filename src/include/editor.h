@@ -3,6 +3,8 @@
 
 #include "buffer.h"
 
+#define KEY_DELETE 127
+
 typedef struct {
     Buffer b;
     int x;
