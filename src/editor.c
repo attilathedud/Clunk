@@ -52,6 +52,7 @@ void editor_handle_input( Editor *e, const int ch ) {
     if( e == NULL )
         return;
 
+    // todo: clean up
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
@@ -101,6 +102,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             break;
         default:
+            // todo: fix insert on multiple lines
             buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
             e->x++;
             break;

@@ -86,7 +86,6 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
     }
 }
 
-//todo: alloc memory if we overflow
 void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {
     if( b == NULL )
         return;
@@ -94,7 +93,15 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
     buffer_set_current_node( b, index );
     if( b->current->text == NULL )
         b->current->text = calloc( LINE_ALLOC_STEP, sizeof( char ) );
-    
+
+    // todo: fix alloc bug after first alloc, see storage
+    if( strlen( b->current->text ) + 1 > LINE_ALLOC_STEP ) {
+        char *temp_buffer = b->current->text;
+        b->current->text = calloc(strlen(temp_buffer) * LINE_ALLOC_STEP, sizeof( char ));
+        memcpy(b->current->text, temp_buffer, strlen(temp_buffer) * sizeof(char));
+        free(temp_buffer);
+        temp_buffer = NULL;
+    }
 
     for( int i = 0; i < x; i++ ) {
         if( b->current->text[ i ] == 0 ) {
