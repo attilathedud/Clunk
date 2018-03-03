@@ -54,11 +54,11 @@ void buffer_cleanup( Buffer *b ) {
 
 size_t buffer_get_text_len( Buffer *b, const int index ) {
     if( b == NULL )
-        return 1;
+        return 0;
 
     buffer_set_current_node( b, index );
     if( b->current->text == NULL )
-        return 1;
+        return 0;
 
     return strlen(b->current->text);
 }

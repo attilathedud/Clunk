@@ -60,6 +60,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
+            if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
             break;
         case KEY_DOWN:
             if( e->y < LINES - 2 ) e->y++;
@@ -68,19 +69,22 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
+            if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
             break;
         case KEY_LEFT:
+            // todo: fix bug where going to previous line doesn't set x correctly
             if( e->x > NOTES_OFFSET ) { e->x--; }
             else {
                 if( e->y + e->scroll_offset > 0 ) {
                     e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET - 1;
                 }
+                if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
         case KEY_RIGHT:
-            if( e->x > COLS - 1 || e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 2) {
+            if( e->x > COLS - 1 || e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1) {
                 e->x = NOTES_OFFSET;
                 if( e->y < LINES - 2 ) e->y++;
                 else e->scroll_offset++; 
