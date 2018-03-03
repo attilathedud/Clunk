@@ -53,13 +53,15 @@ int main( int argc, char** argv ) {
         return -1;
     }
 
+    //todo fix editor not laoding first file when start
     editor_load_file( &e, m.s.home_directory, m.s.files[ 0 ] );
 
     do {
         erase();
 
         // if the menu is controlled, don't pass input to editor
-        if( menu_handle_input(&m, ch) == 1 ) {
+        //todo fix y clearing input
+        if( menu_handle_input(&m, ch) ) {
             editor_handle_input(&e, ch);
         }
 

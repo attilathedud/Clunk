@@ -71,28 +71,32 @@ int menu_handle_input( Menu *m, const int ch ) {
             break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:
-            if( m->is_deleting_file ) {
-                if( m->selected_file_index < 0 || m->selected_file_index > m->s.file_count - 1 )
-                    break;
-
-                storage_delete_note(&(m->s), m->selected_file_index);
-                storage_cleanup(&(m->s));
-                storage_get_notes(&(m->s));
-
-                if( m->selected_file_index > m->s.file_count - 1 ) {
-                    m->selected_file_index = ( m->s.file_count - 1 < 0 ) ? 0 : m->s.file_count - 1;
-                }
-
-                if( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 < LINES - 2 ) {
-                    m->scroll_offset--;
-                }
-
-                if( m->scroll_offset < 0 ) {
-                    m->scroll_offset = 0;
-                }
+            if( !m->is_deleting_file ) {
+                pass_input_to_editor = true;
+                break;
             }
-            m->is_deleting_file = false;
+
+            if( m->selected_file_index < 0 || m->selected_file_index > m->s.file_count - 1 )
+                break;
+
+            storage_delete_note(&(m->s), m->selected_file_index);
+            storage_cleanup(&(m->s));
+            storage_get_notes(&(m->s));
+
+            if( m->selected_file_index > m->s.file_count - 1 ) {
+                m->selected_file_index = ( m->s.file_count - 1 < 0 ) ? 0 : m->s.file_count - 1;
+            }
+
+            if( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 < LINES - 2 ) {
+                m->scroll_offset--;
+            }
+
+            if( m->scroll_offset < 0 ) {
+                m->scroll_offset = 0;
+            }
+
             m->has_changed_file = true;
+            m->is_deleting_file = false;
             break;
         default:
             m->is_deleting_file = false;
