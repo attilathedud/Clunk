@@ -120,7 +120,7 @@ void editor_print( Editor *e ) {
 
     while( iter != NULL ) {
         if( iter->text == NULL ) 
-            continue;
+            break;
         
         //todo fix magic numbers
         //todo fix cursor pos
