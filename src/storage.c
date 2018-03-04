@@ -81,6 +81,7 @@ void storage_cleanup( Storage *s ) {
     }
 
     s->file_count = 0;
+    s->allocs = 0;
 }
 
 int storage_get_notes( Storage *s ) {
@@ -94,6 +95,7 @@ int storage_get_notes( Storage *s ) {
         return -1;
 
     s->files = calloc( NOTES_ALLOC_STEP, sizeof(char*) );
+    s->allocs++;
 
     while ((dp = readdir (dir)) != NULL) {
         if( strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".DS_Store") == 0 )
@@ -102,11 +104,11 @@ int storage_get_notes( Storage *s ) {
         s->files[s->file_count] = calloc(1, strlen(dp->d_name) + 1);
         strcpy(s->files[s->file_count], dp->d_name);
 
-        // todo: fix alloc bug, will allocate for every note past 64
         s->file_count++;
-        if( s->file_count > NOTES_ALLOC_STEP - 1 ) {
+        if( s->file_count + 1 > NOTES_ALLOC_STEP * s->allocs ) {
             char **temp_note_buffer = s->files;
-            s->files = calloc( s->file_count + NOTES_ALLOC_STEP, sizeof(char*));
+            s->allocs++;
+            s->files = calloc( s->allocs * NOTES_ALLOC_STEP, sizeof(char*));
             memcpy(s->files, temp_note_buffer, (s->file_count) * sizeof(char*));
             free(temp_note_buffer);
             temp_note_buffer = NULL;

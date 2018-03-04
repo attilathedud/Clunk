@@ -5,6 +5,7 @@
 
 typedef struct {
     int file_count;
+    int allocs;
     char **files;
     char *home_directory;
 } Storage;
