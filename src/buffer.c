@@ -111,6 +111,12 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
         }
     }
 
+    if( b->current->text[ x ] != 0 ) {
+        for( int i = strlen( b->current->text ); i >= x; i-- ) {
+            b->current->text[ i + 1 ] = b->current->text[ i ];
+        }
+    }
+
     b->current->text[ x ] = ch;
 }
 
