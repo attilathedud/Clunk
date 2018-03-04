@@ -53,6 +53,7 @@ void editor_handle_input( Editor *e, const int ch ) {
         return;
 
     // todo: clean up
+    // todo: handle return
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
@@ -61,7 +62,6 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
-            if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
             break;
         case KEY_DOWN:
             if( e->y < LINES - 2 ) e->y++;
@@ -70,7 +70,6 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
             }
-            if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
             break;
         case KEY_LEFT:
             // todo: fix bug where going to previous line doesn't set x correctly
@@ -79,7 +78,6 @@ void editor_handle_input( Editor *e, const int ch ) {
                 if( e->y + e->scroll_offset > 0 ) {
                     e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET - 1;
                 }
-                if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
@@ -92,6 +90,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
+        // todo: allow line to be deleted
         case KEY_DELETE:
             if( e->x == NOTES_OFFSET && e->y == 0 ) 
                 break;
@@ -101,6 +100,12 @@ void editor_handle_input( Editor *e, const int ch ) {
                 e->x--;
             }
             break;
+        case KEY_TAB:
+            for( int i = 0; i < 4; i++ ) {
+                buffer_insert_character( &(e->b), ' ', e->x - NOTES_OFFSET - 4 + i, e->y + e->scroll_offset );
+            }
+            e->x += 4;
+            break;
         default:
             // todo: fix insert on multiple lines
             // todo: fix scrolling insert
@@ -108,6 +113,8 @@ void editor_handle_input( Editor *e, const int ch ) {
             e->x++;
             break;
     }
+
+    if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
 }
 
 void editor_print( Editor *e ) {

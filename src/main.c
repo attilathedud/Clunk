@@ -60,7 +60,6 @@ int main( int argc, char** argv ) {
         erase();
 
         // if the menu is controlled, don't pass input to editor
-        //todo fix y clearing input
         if( menu_handle_input(&m, ch) ) {
             editor_handle_input(&e, ch);
         }

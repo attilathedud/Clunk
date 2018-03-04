@@ -4,6 +4,7 @@
 #include "buffer.h"
 
 #define KEY_DELETE 127
+#define KEY_TAB 9
 
 typedef struct {
     Buffer b;
