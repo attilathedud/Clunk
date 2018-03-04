@@ -96,11 +96,11 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
         b->current->allocs++;
     }
 
-    if( strlen( b->current->text ) + 1 > LINE_ALLOC_STEP * b->current->allocs ) {
+    if( strlen( b->current->text ) + 2 > LINE_ALLOC_STEP * b->current->allocs ) {
         char *temp_buffer = b->current->text;
         b->current->allocs++;
         b->current->text = calloc(LINE_ALLOC_STEP * b->current->allocs, sizeof( char ));
-        memcpy(b->current->text, temp_buffer, strlen(temp_buffer) * sizeof(char));
+        memcpy(b->current->text, temp_buffer, strlen(temp_buffer));
         free(temp_buffer);
         temp_buffer = NULL;
     }
