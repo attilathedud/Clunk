@@ -176,3 +176,5 @@ int storage_delete_note( const Storage *s, const int file_index ) {
 
     return 0;
 }
+
+//todo save note

@@ -54,6 +54,7 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     // todo: clean up
     // todo: handle return
+    // todo: fix cursor pos on multi-line entries
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
@@ -106,6 +107,12 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             e->x += 4;
             break;
+        // todo move text when returning in middle of line
+        case KEY_RETURN:
+            if( e->y < LINES - 2 ) e->y++;
+            else e->scroll_offset++;
+            e->x = NOTES_OFFSET;
+            break;
         default:
             // todo: fix insert on multiple lines
             // todo: fix scrolling insert
@@ -135,7 +142,6 @@ void editor_print( Editor *e ) {
     while( iter != NULL ) {
         if( iter->text != NULL ) {
             //todo fix magic numbers
-            //todo fix cursor pos
             if( strlen(iter->text) > COLS - 1 - NOTES_OFFSET - 4 ) {
                 for( int i = 0; i < strlen( iter->text ); i += COLS - 1 - NOTES_OFFSET  - 4, output_offset++ ) {
                     strncpy( buffer, iter->text + i, COLS - 1 - NOTES_OFFSET - 4 );
