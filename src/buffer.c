@@ -6,7 +6,7 @@
 #include "include/consts.h"
 
 static void buffer_set_current_node( Buffer *b, const int index ) {
-    if( b == NULL )
+    if( b == NULL || index < 0 )
         return;
 
     if( b->head == NULL ) {
@@ -53,7 +53,7 @@ void buffer_cleanup( Buffer *b ) {
 }
 
 size_t buffer_get_text_len( Buffer *b, const int index ) {
-    if( b == NULL )
+    if( b == NULL || index < 0 )
         return 0;
 
     buffer_set_current_node( b, index );
@@ -87,7 +87,7 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
 }
 
 void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {
-    if( b == NULL )
+    if( b == NULL || index < 0 || x < 0 )
         return;
 
     buffer_set_current_node( b, index );
@@ -121,7 +121,7 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
 }
 
 void buffer_remove_character( Buffer *b, const int x, const int index ) {
-    if( b == NULL )
+    if( b == NULL || index < 0 )
         return;
 
     buffer_set_current_node( b, index );
@@ -133,4 +133,26 @@ void buffer_remove_character( Buffer *b, const int x, const int index ) {
     }
 
     b->current->text[ strlen( b->current->text ) ] = 0;
+}
+
+void buffer_remove_line( Buffer *b, const int index ) {
+    node_t *removed_node;
+
+    if( b == NULL || index < 0 )
+        return;
+
+    buffer_set_current_node(b, index);
+    removed_node = b->current;
+
+    if( removed_node != NULL && removed_node->text != NULL ) {
+        for( int i = 0; i < strlen(removed_node->text); i++ ) {
+            buffer_insert_character( b, removed_node->text[ i ], buffer_get_text_len(b, index - 1), index - 1 );
+        }
+    }
+
+    free(removed_node->text);
+    buffer_set_current_node(b, index - 1);
+    b->current->next = removed_node->next;
+    free(removed_node);
+    removed_node = NULL;
 }

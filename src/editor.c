@@ -91,7 +91,6 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
-        // todo: allow line to be deleted
         case KEY_DELETE:
             if( e->x == NOTES_OFFSET && e->y == 0 ) 
                 break;
@@ -99,6 +98,11 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > NOTES_OFFSET ) {
                 buffer_remove_character( &(e->b), e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
                 e->x--;
+            }
+            else {
+                buffer_remove_line( &(e->b), e->y + e->scroll_offset );
+                if( e->y > 0 ) e->y--;
+                else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
         case KEY_TAB:
