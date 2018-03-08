@@ -93,7 +93,6 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
-        // todo: fix cursor placement
         case KEY_DELETE:
             if( e->x == NOTES_OFFSET && e->y == 0 ) 
                 break;
@@ -103,6 +102,7 @@ void editor_handle_input( Editor *e, const int ch ) {
                 e->x--;
             }
             else {
+                e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET;
                 buffer_remove_line( &(e->b), e->y + e->scroll_offset );
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
