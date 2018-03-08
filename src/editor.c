@@ -39,6 +39,9 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
         return;
 
     while( ( line = fgetln( f, &len ) ) != NULL ) {
+        if( line[ len - 1 ] == '\n' ) {
+            line[ len - 1 ] = 0;
+        }
         buffer_append_line( &(e->b), line, len );
     }
 
@@ -61,7 +64,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             else if( e->scroll_offset > 0 ) e->scroll_offset--;
 
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
-                e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
+                e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET;
             }
             break;
         case KEY_DOWN:
@@ -69,15 +72,14 @@ void editor_handle_input( Editor *e, const int ch ) {
             else e->scroll_offset++;
 
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
-                e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1;
+                e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET;
             }
             break;
         case KEY_LEFT:
-            // todo: fix bug where going to previous line doesn't set x correctly
             if( e->x > NOTES_OFFSET ) { e->x--; }
             else {
                 if( e->y + e->scroll_offset > 0 ) {
-                    e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET - 1;
+                    e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET;
                 }
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;

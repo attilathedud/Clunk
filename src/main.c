@@ -43,7 +43,7 @@ int main( int argc, char** argv ) {
     keypad( stdscr, TRUE );
 
     start_color();
-	init_pair(1, COLOR_BLACK, COLOR_CYAN);
+    init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
     if( menu_init(&m) == -1 ) {
