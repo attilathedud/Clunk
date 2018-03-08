@@ -20,6 +20,7 @@ size_t buffer_get_text_len( Buffer *, const int );
 void buffer_insert_character( Buffer *, const char, const int, const int );
 void buffer_remove_character( Buffer *, const int, const int );
 void buffer_remove_line( Buffer *, const int );
+void buffer_split_line( Buffer *, const int, const int );
 //todo: change index to size_t to account for large files
 
 #endif

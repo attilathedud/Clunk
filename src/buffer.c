@@ -73,6 +73,7 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
 
     if( len > 0 && line != NULL ) {
         new_node->text = calloc( len + 1, sizeof( char ) );
+        // todo: fix alloc bug with this
         strncpy( new_node->text, line, len );
     }
 
@@ -84,6 +85,27 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
         b->current->next = new_node;
         b->current = b->current->next;
     }
+}
+
+void buffer_split_line( Buffer *b, const int x, const int index ) {
+    if( b == NULL || index < 0 || x < 0 )
+        return;
+
+    buffer_set_current_node( b, index );
+    node_t *next_node = b->current->next;
+    node_t *new_node = calloc( 1, sizeof( node_t ) );
+    if( new_node == NULL )
+        return;
+
+    new_node->text = calloc(LINE_ALLOC_STEP * b->current->allocs, sizeof( char ));
+    new_node->allocs = b->current->allocs;
+    memcpy(new_node->text, b->current->text + x, strlen( b->current->text ) - x );
+    for( int i = strlen( b->current->text ); i > x; i-- ) {
+        buffer_remove_character(b, i, index );
+    }
+
+    b->current->next = new_node;
+    new_node->next = next_node;
 }
 
 void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {

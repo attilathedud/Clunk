@@ -93,6 +93,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else e->x++;
             break;
+        // todo: fix cursor placement
         case KEY_DELETE:
             if( e->x == NOTES_OFFSET && e->y == 0 ) 
                 break;
@@ -113,8 +114,8 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             e->x += 4;
             break;
-        // todo move text when returning in middle of line
         case KEY_RETURN:
+            buffer_split_line(&(e->b), e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
             if( e->y < LINES - 2 ) e->y++;
             else e->scroll_offset++;
             e->x = NOTES_OFFSET;
