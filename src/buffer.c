@@ -73,7 +73,7 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
 
     if( len > 0 && line != NULL ) {
         new_node->text = calloc( len + 1, sizeof( char ) );
-        // todo: fix alloc bug with this
+        // todo: fix alloc bug with this, inc alloc+ for longer strings
         strncpy( new_node->text, line, len );
     }
 

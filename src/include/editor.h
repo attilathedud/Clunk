@@ -12,6 +12,7 @@ typedef struct {
     int x;
     int y;
     int scroll_offset;
+    int x_page_offset;
 } Editor;
 
 void editor_cleanup( Editor * );

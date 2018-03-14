@@ -17,6 +17,7 @@ void editor_cleanup( Editor *e ) {
     e->x = NOTES_OFFSET;
     e->y = 0;
     e->scroll_offset = 0;
+    e->x_page_offset = 0;
 }
 
 void editor_load_file( Editor *e, const char *home_directory, const char *file ) {
@@ -56,9 +57,12 @@ void editor_handle_input( Editor *e, const int ch ) {
         return;
 
     // todo: clean up
-    // todo: handle return
-    // todo: fix cursor pos on multi-line entries
+    // todo: fix key commands with x scroll
+    // todo: if up on top line, go to first character
+    // todo: add support for home and end, page up/down
+    // todo: only allow printable chars (http://www.cplusplus.com/reference/cctype/isalnum/)
     switch( ch ) {
+        //fix scroll
         case KEY_UP:
             if( e->y > 0 ) e->y--;
             else if( e->scroll_offset > 0 ) e->scroll_offset--;
@@ -67,6 +71,7 @@ void editor_handle_input( Editor *e, const int ch ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET;
             }
             break;
+        //fix scroll
         case KEY_DOWN:
             if( e->y < LINES - 2 ) e->y++;
             else e->scroll_offset++;
@@ -74,25 +79,36 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET;
             }
+
+            e->x_page_offset = 0;
             break;
         case KEY_LEFT:
-            if( e->x > NOTES_OFFSET ) { e->x--; }
+            if( e->x > NOTES_OFFSET ) e->x--;
+            else if( e->x_page_offset > 0 ) e->x_page_offset--;
             else {
                 if( e->y + e->scroll_offset > 0 ) {
                     e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET;
+                    while( e->x > COLS - 2 ) {
+                        e->x_page_offset++;
+                        e->x--;
+                    }
                 }
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
         case KEY_RIGHT:
-            if( e->x > COLS - 1 || e->x > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1) {
+            if( e->x < COLS - 2 ) e->x++;
+            else e->x_page_offset++;
+
+            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1) {
                 e->x = NOTES_OFFSET;
+                e->x_page_offset = 0;
                 if( e->y < LINES - 2 ) e->y++;
                 else e->scroll_offset++; 
             }
-            else e->x++;
             break;
+        //fix scroll
         case KEY_DELETE:
             if( e->x == NOTES_OFFSET && e->y == 0 ) 
                 break;
@@ -108,6 +124,7 @@ void editor_handle_input( Editor *e, const int ch ) {
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
+        //fix scroll
         case KEY_TAB:
             for( int i = 0; i < 4; i++ ) {
                 buffer_insert_character( &(e->b), ' ', e->x - NOTES_OFFSET - 4 + i, e->y + e->scroll_offset );
@@ -115,16 +132,16 @@ void editor_handle_input( Editor *e, const int ch ) {
             e->x += 4;
             break;
         case KEY_RETURN:
-            buffer_split_line(&(e->b), e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
+            buffer_split_line(&(e->b), e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
             if( e->y < LINES - 2 ) e->y++;
             else e->scroll_offset++;
             e->x = NOTES_OFFSET;
+            e->x_page_offset = 0;
             break;
         default:
-            // todo: fix insert on multiple lines
-            // todo: fix scrolling insert
-            buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
-            e->x++;
+            buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+            if( e->x < COLS - 2 ) e->x++;
+            else e->x_page_offset++;
             break;
     }
 
@@ -133,7 +150,6 @@ void editor_handle_input( Editor *e, const int ch ) {
 
 void editor_print( Editor *e ) {
     int output_line = 0;
-    int output_offset = 0;
 
     if( e == NULL )
         return;
@@ -146,26 +162,18 @@ void editor_print( Editor *e ) {
 
     char *buffer = calloc( COLS, sizeof( char ));
 
+    // todo: only print text on screen
     while( iter != NULL ) {
         if( iter->text != NULL ) {
-            //todo fix magic numbers
-            if( strlen(iter->text) > COLS - 1 - NOTES_OFFSET - 4 ) {
-                for( int i = 0; i < strlen( iter->text ); i += COLS - 1 - NOTES_OFFSET  - 4, output_offset++ ) {
-                    strncpy( buffer, iter->text + i, COLS - 1 - NOTES_OFFSET - 4 );
-                    buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
-                    mvprintw(output_line + output_offset, NOTES_OFFSET, buffer);
-                }
-            }
-            else {
-                mvprintw( output_line, NOTES_OFFSET, iter->text );
-            }
+            memset(buffer, 0, COLS * sizeof(char) );
+            strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - NOTES_OFFSET - 4 );
+            buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
+            mvprintw(output_line, NOTES_OFFSET, buffer);
         }
         clrtoeol();
 
         output_line++;
-        output_line += output_offset;
         iter = iter->next;
-        output_offset = 0;
     }
 
     free( buffer );
@@ -174,6 +182,6 @@ void editor_print( Editor *e ) {
 void editor_print_cursor( Editor *e ) {
     if( e == NULL )
         return;
-
+    
     move(e->y, e->x);
 }
