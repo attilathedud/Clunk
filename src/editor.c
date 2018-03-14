@@ -114,28 +114,36 @@ void editor_handle_input( Editor *e, const int ch ) {
                 else e->scroll_offset++; 
             }
             break;
-        //fix scroll
         case KEY_DELETE:
-            if( e->x == NOTES_OFFSET && e->y == 0 ) 
+            if( e->x + e->x_page_offset == NOTES_OFFSET && e->y == 0 ) 
                 break;
             
-            if( e->x > NOTES_OFFSET ) {
-                buffer_remove_character( &(e->b), e->x - NOTES_OFFSET - 4, e->y + e->scroll_offset );
-                e->x--;
+            if( e->x + e->x_page_offset > NOTES_OFFSET ) {
+                buffer_remove_character( &(e->b), e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+                if( e->x > NOTES_OFFSET ) e->x--;
+                else if( e->x_page_offset > 0 ) e->x_page_offset--;
             }
             else {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y - 1 ) + NOTES_OFFSET;
+                e->x_page_offset = 0;
+                while( e->x > COLS - 2 ) {
+                    e->x_page_offset++;
+                    e->x--;
+                }
                 buffer_remove_line( &(e->b), e->y + e->scroll_offset );
                 if( e->y > 0 ) e->y--;
                 else if( e->scroll_offset > 0 ) e->scroll_offset--;
             }
             break;
-        //fix scroll
         case KEY_TAB:
             for( int i = 0; i < 4; i++ ) {
-                buffer_insert_character( &(e->b), ' ', e->x - NOTES_OFFSET - 4 + i, e->y + e->scroll_offset );
+                buffer_insert_character( &(e->b), ' ', e->x - NOTES_OFFSET - 4 + e->x_page_offset + i, e->y + e->scroll_offset );
             }
             e->x += 4;
+            while( e->x > COLS - 2 ) {
+                e->x_page_offset++;
+                e->x--;
+            }
             break;
         case KEY_RETURN:
             buffer_split_line(&(e->b), e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
