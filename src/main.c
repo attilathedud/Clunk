@@ -53,7 +53,6 @@ int main( int argc, char** argv ) {
         return -1;
     }
 
-    //todo fix editor not laoding first file when start
     editor_load_file( &e, m.s.home_directory, m.s.files[ 0 ] );
 
     do {

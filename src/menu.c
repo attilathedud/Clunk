@@ -18,6 +18,8 @@ int menu_init( Menu *m ) {
         storage_get_notes(&(m->s));
     }
 
+    m->has_changed_file = true;
+
     return 0;
 }
 
