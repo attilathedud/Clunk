@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <ncurses.h>
 
 #include "include/editor.h"
@@ -58,7 +59,6 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     // todo: clean up
     // todo: add support for home and end, page up/down
-    // todo: only allow printable chars (http://www.cplusplus.com/reference/cctype/isalnum/)
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
@@ -155,9 +155,11 @@ void editor_handle_input( Editor *e, const int ch ) {
             e->x_page_offset = 0;
             break;
         default:
-            buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
-            if( e->x < COLS - 2 ) e->x++;
-            else e->x_page_offset++;
+            if( isalnum( ch ) || isspace( ch ) ) { 
+                buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+                if( e->x < COLS - 2 ) e->x++;
+                else e->x_page_offset++;
+            }
             break;
     }
 
