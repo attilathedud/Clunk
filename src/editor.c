@@ -57,14 +57,16 @@ void editor_handle_input( Editor *e, const int ch ) {
         return;
 
     // todo: clean up
-    // todo: fix key commands with x scroll
-    // todo: if up on top line, go to first character
     // todo: add support for home and end, page up/down
     // todo: only allow printable chars (http://www.cplusplus.com/reference/cctype/isalnum/)
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
             else if( e->scroll_offset > 0 ) e->scroll_offset--;
+            else {
+                e->x = NOTES_OFFSET;
+                e->x_page_offset = 0;
+            }
 
             if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1 ) {
                 e->x = buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET;
