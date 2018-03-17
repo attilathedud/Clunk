@@ -61,7 +61,7 @@ int menu_handle_input( Menu *m, const int ch ) {
              m->has_changed_file = true;
 
             break;
-        case KEY_F(5):
+        case KEY_F(6):
             storage_create_note(&(m->s));
             storage_cleanup(&(m->s));
             storage_get_notes(&(m->s));
@@ -116,6 +116,13 @@ int menu_handle_input( Menu *m, const int ch ) {
     }
 
     return pass_input_to_editor;
+}
+
+void menu_save_note( Menu *m, const char *text ) {
+    if( m == NULL || text == NULL )
+        return;
+
+    storage_save_note( &(m->s), m->selected_file_index, text );
 }
 
 void menu_print( Menu *m ) {

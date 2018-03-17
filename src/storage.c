@@ -177,3 +177,24 @@ int storage_delete_note( const Storage *s, const int file_index ) {
 
     return 0;
 }
+
+void storage_save_note( const Storage *s, const int file_index, const char *text ) {
+    char *note_name = NULL;
+    FILE *note_stream = NULL;
+
+    if( s == NULL || text == NULL )
+        return;
+
+    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+
+    sprintf(note_name, "%s/%s", s->home_directory, s->files[file_index]);
+
+    note_stream = fopen( note_name, "w" );
+    fputs( text, note_stream );
+    fclose( note_stream );
+
+    if( note_name != NULL ) {
+        free( note_name );
+        note_name = NULL;
+    }
+}

@@ -20,5 +20,6 @@ int menu_init( Menu * );
 int menu_handle_input( Menu *, const int );
 void menu_print( Menu * );
 void menu_cleanup( Menu * );
+void menu_save_note( Menu *, const char * );
 
 #endif

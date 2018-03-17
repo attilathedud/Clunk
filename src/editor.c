@@ -166,6 +166,37 @@ void editor_handle_input( Editor *e, const int ch ) {
     if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
 }
 
+char *editor_get_text( Editor *e ) {
+    char *text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
+    int allocs = 1;
+
+    if( e == NULL )
+        return NULL;
+    
+    node_t *iter = e->b.head;
+    while( iter != NULL ) {
+        if( strlen( text ) + ( iter->text == NULL ? 1 : strlen( iter->text ) ) + 1 > LINE_ALLOC_STEP * 10 * allocs ) {
+            char *temp_buffer = text;
+            allocs++;
+            text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
+            memcpy( text, temp_buffer, strlen( temp_buffer ));
+            free( temp_buffer );
+            temp_buffer = NULL;
+        }
+
+        if( iter->text == NULL ) {
+            strcat( text, "\n" );
+        }
+        else {
+            strcat( text, iter->text );
+        }
+
+        iter = iter->next;
+    }
+
+    return text;
+}
+
 void editor_print( Editor *e ) {
     int output_line = 0;
 

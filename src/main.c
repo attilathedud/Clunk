@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "include/consts.h"
@@ -17,6 +18,10 @@ static void print_help_line() {
     printw("Next Note ");
     attron(COLOR_PAIR(1));
     printw("F5");
+    attroff(COLOR_PAIR(1));
+    printw("Save Note ");
+    attron(COLOR_PAIR(1));
+    printw("F6");
     attroff(COLOR_PAIR(1));
     printw("Create Note ");
     attron(COLOR_PAIR(1));
@@ -58,13 +63,23 @@ int main( int argc, char** argv ) {
     do {
         erase();
 
-        // if the menu is controlled, don't pass input to editor
-        if( menu_handle_input(&m, ch) ) {
-            editor_handle_input(&e, ch);
+        if( ch == KEY_F(5) ) {
+            char *text = editor_get_text(&e);
+            menu_save_note(&m, text);
+            free(text);
+            attron(COLOR_PAIR(1));
+            mvprintw( LINES - 2, 0, "Note saved" );
+            attroff(COLOR_PAIR(1));
         }
+        else {
+            // if the menu is controlled, don't pass input to editor
+            if( menu_handle_input(&m, ch) ) {
+                editor_handle_input(&e, ch);
+            }
 
-        if( m.has_changed_file ) {
-            editor_load_file( &e, m.s.home_directory, m.s.files[ m.selected_file_index ] );
+            if( m.has_changed_file ) {
+                editor_load_file( &e, m.s.home_directory, m.s.files[ m.selected_file_index ] );
+            }
         }
 
         editor_print(&e);
