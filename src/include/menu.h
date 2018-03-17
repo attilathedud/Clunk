@@ -3,6 +3,11 @@
 
 #include "storage.h"
 
+#define KEY_UPPER_Y 89
+#define KEY_LOWER_Y 121
+#define KEY_LOWER_N 110
+#define KEY_UPPER_N 78
+
 typedef struct {
     Storage s;
     int selected_file_index;

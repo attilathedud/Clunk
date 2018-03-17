@@ -100,6 +100,14 @@ int menu_handle_input( Menu *m, const int ch ) {
             m->has_changed_file = true;
             m->is_deleting_file = false;
             break;
+        case KEY_LOWER_N:
+        case KEY_UPPER_N:
+            if( !m->is_deleting_file ) {
+                pass_input_to_editor = true;
+            }
+            m->is_deleting_file = false;
+            m->has_changed_file = false;
+            break;
         default:
             m->is_deleting_file = false;
             m->has_changed_file = false;
