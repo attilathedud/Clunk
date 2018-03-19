@@ -59,6 +59,7 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     // todo: clean up
     // todo: add support for home and end, page up/down
+    // todo: fix bug with scrolling right on saved files
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;
