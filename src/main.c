@@ -103,6 +103,7 @@ int main( int argc, char** argv ) {
     } while( ( ch = getch( ) ) != KEY_F(10) );
 
     menu_cleanup(&m);
+    editor_cleanup(&e);
 
     refresh( );
     endwin( );
