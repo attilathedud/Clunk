@@ -198,3 +198,23 @@ void storage_save_note( const Storage *s, const int file_index, const char *text
         note_name = NULL;
     }
 }
+
+// todo: check if note exists
+void storage_rename_note( const Storage *s, const int file_index, const char *name) {
+    char *old_note_name = NULL;
+    char *new_note_name = NULL;
+
+    if( s == NULL || name == NULL )
+        return;
+
+    old_note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+    sprintf(old_note_name, "%s/%s", s->home_directory, s->files[file_index]);
+    
+    new_note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(name) + 1);
+    sprintf(new_note_name, "%s/%s", s->home_directory, name);
+
+    rename( old_note_name, new_note_name );
+
+    free( old_note_name );
+    free( new_note_name );
+}

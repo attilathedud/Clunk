@@ -1,3 +1,4 @@
+#include <string.h>
 #include <ncurses.h>
 
 #include "include/consts.h"
@@ -66,15 +67,30 @@ int menu_handle_input( Menu *m, const int ch ) {
             storage_cleanup(&(m->s));
             storage_get_notes(&(m->s));
             break;
+        case KEY_F(7):
+            if( m->s.file_count > 0 ) {
+                m->is_renaming_file = true;
+                m->is_deleting_file = false;
+                memset( m->rename_buffer, 0, sizeof( m->rename_buffer ));
+            }
+            break;
         case KEY_F(8):
             if( m->s.file_count > 0 ) {
                 m->is_deleting_file = true;
+                m->is_renaming_file = false;
             }
             break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:
-            if( !m->is_deleting_file ) {
+            if( !m->is_deleting_file && !m->is_renaming_file) {
                 pass_input_to_editor = true;
+                break;
+            }
+
+            if( m->is_renaming_file ) {
+                if( strlen( m->rename_buffer ) < 128 ) {
+                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
+                }
                 break;
             }
 
@@ -102,16 +118,44 @@ int menu_handle_input( Menu *m, const int ch ) {
             break;
         case KEY_LOWER_N:
         case KEY_UPPER_N:
-            if( !m->is_deleting_file ) {
+            if( !m->is_deleting_file && !m->is_renaming_file ) {
                 pass_input_to_editor = true;
             }
             m->is_deleting_file = false;
             m->has_changed_file = false;
+
+            if( m->is_renaming_file ) {
+                if( strlen( m->rename_buffer ) < 128 ) {
+                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
+                }
+            }
+            break;
+        case KEY_RETURN:
+            if( !m->is_renaming_file ) {
+                pass_input_to_editor = true;
+                break;
+            }
+
+            // todo: save note before renaming
+
+            storage_rename_note(&(m->s), m->selected_file_index, m->rename_buffer );
+            storage_cleanup(&(m->s));
+            storage_get_notes(&(m->s));
+
+            m->is_renaming_file = false;
             break;
         default:
-            m->is_deleting_file = false;
-            m->has_changed_file = false;
-            pass_input_to_editor = true;
+            if( m->is_renaming_file ) {
+                if( strlen( m->rename_buffer ) < 128 ) {
+                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
+                }
+            }
+            else {
+                m->is_deleting_file = false;
+                m->is_renaming_file = false;
+                m->has_changed_file = false;
+                pass_input_to_editor = true;
+            }
             break;
     }
 
@@ -143,6 +187,12 @@ void menu_print( Menu *m ) {
     if( m->is_deleting_file ) {
         attron(COLOR_PAIR(1));
         mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
+        attroff(COLOR_PAIR(1));
+    }
+    else if( m->is_renaming_file ) {
+        attron(COLOR_PAIR(1));
+        mvprintw( LINES - 2, 0, "Name (enter): " );
+        printw( m->rename_buffer );
         attroff(COLOR_PAIR(1));
     }
 }

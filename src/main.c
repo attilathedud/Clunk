@@ -96,7 +96,7 @@ int main( int argc, char** argv ) {
         menu_print(&m);
 
         // print separator line
-        mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 );
+        mvvline( 0, MENU_OFFSET, ACS_VLINE, LINES - 1 - m.is_renaming_file );
         print_help_line();
         
         editor_print_cursor(&e);
