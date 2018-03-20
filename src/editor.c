@@ -110,7 +110,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             if( e->x < COLS - 2 ) e->x++;
             else e->x_page_offset++;
 
-            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET - 1) {
+            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET) {
                 e->x = NOTES_OFFSET;
                 e->x_page_offset = 0;
                 if( e->y < LINES - 2 ) e->y++;
