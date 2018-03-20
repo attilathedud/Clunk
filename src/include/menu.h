@@ -2,6 +2,7 @@
 #define MENU_H
 
 #include "storage.h"
+#include "editor.h"
 
 #define KEY_UPPER_Y 89
 #define KEY_LOWER_Y 121
@@ -20,7 +21,7 @@ typedef struct {
 } Menu;
 
 int menu_init( Menu * );
-int menu_handle_input( Menu *, const int );
+int menu_handle_input( Menu *, Editor *, const int );
 void menu_print( Menu * );
 void menu_cleanup( Menu * );
 void menu_save_note( Menu *, const char * );

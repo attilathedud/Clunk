@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include <ncurses.h>
 
 #include "include/consts.h"
@@ -24,8 +25,9 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
-int menu_handle_input( Menu *m, const int ch ) {
+int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
+    char *note_text = NULL;
 
     if( m == NULL )
         return -1;
@@ -61,6 +63,14 @@ int menu_handle_input( Menu *m, const int ch ) {
 
              m->has_changed_file = true;
 
+            break;
+        case KEY_F(5):
+            note_text = editor_get_text(e);
+            menu_save_note(m, note_text);
+            free(note_text);
+            attron(COLOR_PAIR(1));
+            mvprintw( LINES - 2, 0, "Note saved" );
+            attroff(COLOR_PAIR(1));
             break;
         case KEY_F(6):
             storage_create_note(&(m->s));
@@ -136,7 +146,9 @@ int menu_handle_input( Menu *m, const int ch ) {
                 break;
             }
 
-            // todo: save note before renaming
+            note_text = editor_get_text(e);
+            menu_save_note(m, note_text);
+            free(note_text);
 
             storage_rename_note(&(m->s), m->selected_file_index, m->rename_buffer );
             storage_cleanup(&(m->s));
