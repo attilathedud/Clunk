@@ -21,6 +21,7 @@ int menu_init( Menu *m ) {
     }
 
     m->has_changed_file = true;
+    m->display_about_screen = false;
 
     return 0;
 }
@@ -31,6 +32,8 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
 
     if( m == NULL )
         return -1;
+
+    m->display_about_screen = false;
 
     switch( ch ) {
         case KEY_F(1):
@@ -89,6 +92,9 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 m->is_deleting_file = true;
                 m->is_renaming_file = false;
             }
+            break;
+        case KEY_F(9):
+            m->display_about_screen = true;
             break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:
@@ -182,30 +188,42 @@ void menu_save_note( Menu *m, const char *text ) {
 }
 
 void menu_print( Menu *m ) {
-    for( int i = 0; i + m->scroll_offset < m->s.file_count; i++ ) {
-        if( i + m->scroll_offset == m->selected_file_index ) {
+    if( m->display_about_screen ) {
+        mvprintw( 0, COLS/ 2, "##### #     #   # #   # #  #");
+        mvprintw( 1, COLS/ 2, "#     #     #   # # # # # #");
+        mvprintw( 2, COLS/ 2, "#     #     #   # #  ## #");
+        mvprintw( 3, COLS/ 2, "#     #     #   # #   # # #");
+        mvprintw( 4, COLS/ 2, "##### ##### ##### #   # #  #");
+        mvprintw( 5, COLS/ 2, "      Just take notes.");
+
+        mvprintw( 7, NOTES_OFFSET, "Clunk is a note taking application the stores notes locally.");
+    }
+    else {
+        for( int i = 0; i + m->scroll_offset < m->s.file_count; i++ ) {
+            if( i + m->scroll_offset == m->selected_file_index ) {
+                attron(COLOR_PAIR(1));
+                move((i * 2) + 1, 5);
+                printw(" ");
+                printw(m->s.files[ i + m->scroll_offset ]);
+                printw(" ");
+                attroff(COLOR_PAIR(1));
+            }
+            else {
+                mvprintw((i * 2) + 1, 1, m->s.files[ i + m->scroll_offset ]);
+            }
+        }
+
+        if( m->is_deleting_file ) {
             attron(COLOR_PAIR(1));
-            move((i * 2) + 1, 5);
-            printw(" ");
-            printw(m->s.files[ i + m->scroll_offset ]);
-            printw(" ");
+            mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
             attroff(COLOR_PAIR(1));
         }
-        else {
-            mvprintw((i * 2) + 1, 1, m->s.files[ i + m->scroll_offset ]);
+        else if( m->is_renaming_file ) {
+            attron(COLOR_PAIR(1));
+            mvprintw( LINES - 2, 0, "Name (enter): " );
+            printw( m->rename_buffer );
+            attroff(COLOR_PAIR(1));
         }
-    }
-
-    if( m->is_deleting_file ) {
-        attron(COLOR_PAIR(1));
-        mvprintw( LINES - 2, 0, "Are you sure? (y/n):" );
-        attroff(COLOR_PAIR(1));
-    }
-    else if( m->is_renaming_file ) {
-        attron(COLOR_PAIR(1));
-        mvprintw( LINES - 2, 0, "Name (enter): " );
-        printw( m->rename_buffer );
-        attroff(COLOR_PAIR(1));
     }
 }
 

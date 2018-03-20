@@ -7,8 +7,6 @@
 #include "include/editor.h"
 #include "include/consts.h"
 
-//todo deal with resizing
-
 void editor_cleanup( Editor *e ) {
     if( e == NULL )
         return;
@@ -59,7 +57,6 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     // todo: clean up
     // todo: add support for home and end, page up/down
-    // todo: fix bug with scrolling right on saved files
     switch( ch ) {
         case KEY_UP:
             if( e->y > 0 ) e->y--;

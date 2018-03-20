@@ -80,7 +80,9 @@ int main( int argc, char** argv ) {
             editor_load_file( &e, m.s.home_directory, m.s.files[ m.selected_file_index ] );
         }
 
-        editor_print(&e);
+        if( !m.display_about_screen ) 
+            editor_print(&e);
+            
         menu_print(&m);
 
         // print separator line

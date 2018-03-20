@@ -17,6 +17,7 @@ typedef struct {
     int is_deleting_file;
     int is_renaming_file;
     int has_changed_file;
+    int display_about_screen;
     char rename_buffer[ 128 ];      //todo: explain why acceptable
 } Menu;
 
