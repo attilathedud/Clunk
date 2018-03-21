@@ -164,7 +164,7 @@ char *editor_get_text( Editor *e ) {
         if( strlen( text ) + ( iter->text == NULL ? 1 : strlen( iter->text ) ) + 1 > LINE_ALLOC_STEP * 10 * allocs ) {
             char *temp_buffer = text;
             allocs++;
-            text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
+            text = calloc( LINE_ALLOC_STEP * 10 * allocs, sizeof( char ) );
             memcpy( text, temp_buffer, strlen( temp_buffer ));
             free( temp_buffer );
             temp_buffer = NULL;
