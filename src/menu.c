@@ -6,6 +6,25 @@
 #include "include/storage.h"
 #include "include/menu.h"
 
+#define ABOUT_TEXT_LINES 15
+
+static char about_text[ABOUT_TEXT_LINES][100] = {
+    "##### #     #   # #   # #  #\0",
+    "#     #     #   # # # # # # \0", 
+    "#     #     #   # #  ## #   \0",   
+    "#     #     #   # #   # # # \0", 
+    "##### ##### ##### #   # #  #\0",
+    "Just take notes.\0",
+    "\0",
+    "Clunk focuses on taking notes and getting out of the way.\0",
+    "\0",
+    "- Notes are stored locally in ~/.clunk/\0",
+    "- All prompts will be in the lower left\0",
+    "- Notes are NOT automatically saved    \0",
+    "\0",
+    "Code is available at github.com/attilathedud/Clunk\0"
+};
+
 int menu_init( Menu *m ) {
     if( m == NULL )
         return -1;
@@ -34,6 +53,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     if( m == NULL )
         return -1;
 
+    // todo: fix crash on typing character while about screen up
     if( ch != KEY_F(9) )
         m->display_about_screen = false;
 
@@ -190,16 +210,11 @@ void menu_save_note( Menu *m, const char *text ) {
 }
 
 void menu_print( Menu *m ) {
-    // todo: add more about text
     if( m->display_about_screen ) {
-        mvprintw( 0, COLS/ 2, "##### #     #   # #   # #  #");
-        mvprintw( 1, COLS/ 2, "#     #     #   # # # # # #" );
-        mvprintw( 2, COLS/ 2, "#     #     #   # #  ## #"   );
-        mvprintw( 3, COLS/ 2, "#     #     #   # #   # # #" );
-        mvprintw( 4, COLS/ 2, "##### ##### ##### #   # #  #");
-        mvprintw( 5, COLS/ 2, "      Just take notes."      );
-
-        mvprintw( 7, NOTES_OFFSET, "Clunk is a note taking application the stores notes locally.");
+        for( int i = 0; i < ABOUT_TEXT_LINES; i++ ) {
+            int screen_text_middle = ((COLS - NOTES_OFFSET) / 2) - (strlen(about_text[ i ]) / 2) + NOTES_OFFSET;
+            mvprintw(i, screen_text_middle, about_text[ i ]);
+        }
     }
     else {
         for( int i = 0; i + m->scroll_offset < m->s.file_count; i++ ) {
