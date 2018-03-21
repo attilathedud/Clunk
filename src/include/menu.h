@@ -10,6 +10,8 @@
 #define KEY_UPPER_N 78
 #define KEY_RETURN 10
 
+#define RENAME_BUFFER_LEN 128
+
 typedef struct {
     Storage s;
     int selected_file_index;
@@ -18,7 +20,7 @@ typedef struct {
     int is_renaming_file;
     int has_changed_file;
     int display_about_screen;
-    char rename_buffer[ 128 ];      //todo: explain why acceptable
+    char rename_buffer[ RENAME_BUFFER_LEN ];
 } Menu;
 
 int menu_init( Menu * );

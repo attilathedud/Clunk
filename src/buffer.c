@@ -108,6 +108,7 @@ void buffer_split_line( Buffer *b, const size_t x, const size_t index ) {
     new_node->next = next_node;
 }
 
+// todo: fix crash when inserting first character
 void buffer_insert_character( Buffer *b, const char ch, const size_t x, const size_t index ) {
     if( b == NULL )
         return;

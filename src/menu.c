@@ -53,10 +53,20 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     if( m == NULL )
         return -1;
 
-    // todo: fix crash on typing character while about screen up
-    if( ch != KEY_F(9) )
-        m->display_about_screen = false;
+    if( ch == KEY_F(9) ) {
+        m->is_deleting_file = false;
+        m->is_renaming_file = false;
+        m->has_changed_file = false;
+        pass_input_to_editor = false;
+        m->display_about_screen = !m->display_about_screen;
+        return pass_input_to_editor;
+    }
 
+    if( m->display_about_screen ) {
+        m->display_about_screen = false;
+        return false;
+    }
+    
     switch( ch ) {
         case KEY_F(1):
             m->selected_file_index--;
@@ -115,9 +125,6 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 m->is_renaming_file = false;
             }
             break;
-        case KEY_F(9):
-            m->display_about_screen = !m->display_about_screen;
-            break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:
             if( !m->is_deleting_file && !m->is_renaming_file) {
@@ -126,7 +133,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             }
 
             if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < 128 ) {
+                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
                     m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
                 }
                 break;
@@ -163,7 +170,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             m->has_changed_file = false;
 
             if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < 128 ) {
+                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
                     m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
                 }
             }
@@ -186,7 +193,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             break;
         default:
             if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < 128 ) {
+                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
                     m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
                 }
             }
