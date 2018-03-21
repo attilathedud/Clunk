@@ -8,6 +8,19 @@
 
 #define ABOUT_TEXT_LINES 15
 
+#define ADD_CHAR_TO_RENAME_BUFFER   if( m->is_renaming_file ) {\
+                                        if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {\
+                                            m->rename_buffer[ strlen(m->rename_buffer) ] = ch;\
+                                        }\
+                                    }
+
+#define SAVE_NOTE   note_text = editor_get_text(e);\
+                    menu_save_note(m, note_text);\
+                    free(note_text);
+
+#define STORAGE_RESET   storage_cleanup(&(m->s));\
+                        storage_get_notes(&(m->s));
+
 static char about_text[ABOUT_TEXT_LINES][100] = {
     "##### #     #   # #   # #  #\0",
     "#     #     #   # # # # # # \0", 
@@ -45,7 +58,6 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
-// todo: clean up
 int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
     char *note_text = NULL;
@@ -100,17 +112,14 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
 
             break;
         case KEY_F(5):
-            note_text = editor_get_text(e);
-            menu_save_note(m, note_text);
-            free(note_text);
+            SAVE_NOTE
             attron(COLOR_PAIR(1));
             mvprintw( LINES - 2, 0, "Note saved" );
             attroff(COLOR_PAIR(1));
             break;
         case KEY_F(6):
             storage_create_note(&(m->s));
-            storage_cleanup(&(m->s));
-            storage_get_notes(&(m->s));
+            STORAGE_RESET
             break;
         case KEY_F(7):
             if( m->s.file_count > 0 ) {
@@ -132,19 +141,14 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 break;
             }
 
-            if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
-                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
-                }
-                break;
-            }
+            ADD_CHAR_TO_RENAME_BUFFER
+            if( m->is_renaming_file ) break;
 
             if( m->selected_file_index < 0 || m->selected_file_index > m->s.file_count - 1 )
                 break;
 
             storage_delete_note(&(m->s), m->selected_file_index);
-            storage_cleanup(&(m->s));
-            storage_get_notes(&(m->s));
+            STORAGE_RESET
 
             if( m->selected_file_index > m->s.file_count - 1 ) {
                 m->selected_file_index = ( m->s.file_count - 1 < 0 ) ? 0 : m->s.file_count - 1;
@@ -169,11 +173,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             m->is_deleting_file = false;
             m->has_changed_file = false;
 
-            if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
-                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
-                }
-            }
+            ADD_CHAR_TO_RENAME_BUFFER
             break;
         case KEY_RETURN:
             if( !m->is_renaming_file ) {
@@ -181,28 +181,20 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 break;
             }
 
-            note_text = editor_get_text(e);
-            menu_save_note(m, note_text);
-            free(note_text);
-
+            SAVE_NOTE
             storage_rename_note(&(m->s), m->selected_file_index, m->rename_buffer );
-            storage_cleanup(&(m->s));
-            storage_get_notes(&(m->s));
+            STORAGE_RESET
 
             m->is_renaming_file = false;
             break;
         default:
-            if( m->is_renaming_file ) {
-                if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {
-                    m->rename_buffer[ strlen(m->rename_buffer) ] = ch;
-                }
-            }
-            else {
+            if(!m->is_renaming_file) {
                 m->is_deleting_file = false;
                 m->is_renaming_file = false;
                 m->has_changed_file = false;
                 pass_input_to_editor = true;
             }
+            else ADD_CHAR_TO_RENAME_BUFFER
             break;
     }
 

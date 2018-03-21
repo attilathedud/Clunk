@@ -78,6 +78,8 @@ void editor_handle_input( Editor *e, const int ch ) {
         return;
 
     // todo: add support for home/end, page up/down
+    // todo: fix enter on first entering note
+    // todo: allow -%#!#% etc
     switch( ch ) {
         case KEY_UP:
             if( e->y == 0 && e->scroll_offset == 0 ) {
