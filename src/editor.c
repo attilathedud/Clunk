@@ -198,8 +198,7 @@ void editor_print( Editor *e ) {
 
     char *buffer = calloc( COLS, sizeof( char ));
 
-    // todo: only print text on screen, fix long text printing on help line
-    while( iter != NULL ) {
+    while( iter != NULL && output_line < LINES - 1) {
         if( iter->text != NULL ) {
             memset(buffer, 0, COLS * sizeof(char) );
             strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET );
