@@ -128,16 +128,18 @@ void buffer_insert_character( Buffer *b, const char ch, const size_t x, const si
         temp_buffer = NULL;
     }
 
-    for( int i = 0; i < x; i++ ) {
+    for( size_t i = 0; i < x; i++ ) {
         if( b->current->text[ i ] == 0 ) {
             b->current->text[ i ] = ' ';
         }
     }
 
     if( b->current->text[ x ] != 0 ) {
-        for( int i = strlen( b->current->text ); i >= x; i-- ) {
+        for( size_t i = strlen( b->current->text ); i > x; i-- ) {
             b->current->text[ i + 1 ] = b->current->text[ i ];
         }
+        // Required for when x = 0 since size_t is unsigned
+        b->current->text[x+1] = b->current->text[x]; 
     }
 
     b->current->text[ x ] = ch;
