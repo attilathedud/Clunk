@@ -94,6 +94,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             }
             break;
         case KEY_F(9):
+            // todo: allow toggle
             m->display_about_screen = true;
             break;
         case KEY_LOWER_Y:

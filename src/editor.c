@@ -170,12 +170,10 @@ char *editor_get_text( Editor *e ) {
             temp_buffer = NULL;
         }
 
-        if( iter->text == NULL ) {
-            strcat( text, "\n" );
-        }
-        else {
+        if( iter->text != NULL ) 
             strcat( text, iter->text );
-        }
+
+        strcat( text, "\n" );
 
         iter = iter->next;
     }
