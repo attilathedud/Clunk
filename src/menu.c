@@ -26,6 +26,7 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
+// todo: clean up
 int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
     char *note_text = NULL;
@@ -33,7 +34,8 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     if( m == NULL )
         return -1;
 
-    m->display_about_screen = false;
+    if( ch != KEY_F(9) )
+        m->display_about_screen = false;
 
     switch( ch ) {
         case KEY_F(1):
@@ -64,7 +66,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 m->scroll_offset++;
             }
 
-             m->has_changed_file = true;
+            m->has_changed_file = true;
 
             break;
         case KEY_F(5):
@@ -94,8 +96,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             }
             break;
         case KEY_F(9):
-            // todo: allow toggle
-            m->display_about_screen = true;
+            m->display_about_screen = !m->display_about_screen;
             break;
         case KEY_LOWER_Y:
         case KEY_UPPER_Y:

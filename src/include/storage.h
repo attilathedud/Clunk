@@ -16,5 +16,6 @@ int storage_create_note(const Storage *);
 int storage_delete_note(const Storage *, const int);
 void storage_save_note( const Storage *, const int, const char * );
 void storage_rename_note( const Storage *, const int, const char *);
+// todo: change index to size_t
 
 #endif
