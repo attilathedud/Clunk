@@ -121,7 +121,6 @@ int storage_get_notes( Storage *s ) {
     return 0;
 }
 
-//todo properly alloc notename sizeof char
 int storage_create_note( const Storage *s ) {
     char *note_name = NULL;
     FILE *temp_file = NULL;
@@ -135,7 +134,7 @@ int storage_create_note( const Storage *s ) {
         digit_count++;
     }
 
-    note_name = calloc(1, strlen(s->home_directory) + strlen("/") + strlen(note_prefix) + digit_count + 1);
+    note_name = calloc(strlen(s->home_directory) + strlen("/") + strlen(note_prefix) + digit_count + 1, sizeof(char));
 
     for( int i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
@@ -158,14 +157,13 @@ int storage_create_note( const Storage *s ) {
 }
 
 //todo fix crash when deleting lots of files
-//todo properly alloc notename sizeof char
 int storage_delete_note( const Storage *s, const int file_index ) {
     char *note_name = NULL;
 
     if( s == NULL )
         return -1;
 
-    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+    note_name = calloc(strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1, sizeof(char));
 
     sprintf(note_name, "%s/%s", s->home_directory, s->files[file_index]);
     remove( note_name );
@@ -185,7 +183,7 @@ void storage_save_note( const Storage *s, const int file_index, const char *text
     if( s == NULL || text == NULL )
         return;
 
-    note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+    note_name = calloc(strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1, sizeof(char));
 
     sprintf(note_name, "%s/%s", s->home_directory, s->files[file_index]);
 
@@ -207,10 +205,10 @@ void storage_rename_note( const Storage *s, const int file_index, const char *na
     if( s == NULL || name == NULL )
         return;
 
-    old_note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1);
+    old_note_name = calloc(strlen(s->home_directory) + 1 + strlen(s->files[file_index]) + 1, sizeof(char));
     sprintf(old_note_name, "%s/%s", s->home_directory, s->files[file_index]);
     
-    new_note_name = calloc(1, strlen(s->home_directory) + 1 + strlen(name) + 1);
+    new_note_name = calloc(strlen(s->home_directory) + 1 + strlen(name) + 1, sizeof(char));
     sprintf(new_note_name, "%s/%s", s->home_directory, name);
 
     rename( old_note_name, new_note_name );

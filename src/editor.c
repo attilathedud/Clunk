@@ -151,7 +151,6 @@ void editor_handle_input( Editor *e, const int ch ) {
     if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
 }
 
-// todo: on newline create 'n'
 char *editor_get_text( Editor *e ) {
     char *text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
     int allocs = 1;
