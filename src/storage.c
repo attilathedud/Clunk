@@ -123,7 +123,7 @@ int storage_get_notes( Storage *s ) {
 
 int storage_create_note( const Storage *s ) {
     char *note_name = NULL;
-    FILE *temp_file = NULL;
+    FILE *tf = NULL;
 
     if( s == NULL )
         return -1;
@@ -138,12 +138,13 @@ int storage_create_note( const Storage *s ) {
 
     for( int i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
-        if( ( temp_file = fopen(note_name, "r") ) ){
-            fclose( temp_file );
+        if( ( tf = fopen(note_name, "r") ) ){
+            fclose( tf );
         }
         else {
-            temp_file = fopen( note_name, "w" );
-            fclose( temp_file );
+            fclose( tf );
+            tf = fopen( note_name, "w" );
+            fclose( tf );
             break;
         }
     }
@@ -156,7 +157,6 @@ int storage_create_note( const Storage *s ) {
     return 0;
 }
 
-//todo fix crash when deleting lots of files
 int storage_delete_note( const Storage *s, const int file_index ) {
     char *note_name = NULL;
 
@@ -197,8 +197,8 @@ void storage_save_note( const Storage *s, const int file_index, const char *text
     }
 }
 
-// todo: check if note exists
 void storage_rename_note( const Storage *s, const int file_index, const char *name) {
+    FILE *tf = NULL;
     char *old_note_name = NULL;
     char *new_note_name = NULL;
 
@@ -211,7 +211,11 @@ void storage_rename_note( const Storage *s, const int file_index, const char *na
     new_note_name = calloc(strlen(s->home_directory) + 1 + strlen(name) + 1, sizeof(char));
     sprintf(new_note_name, "%s/%s", s->home_directory, name);
 
-    rename( old_note_name, new_note_name );
+    if( !( tf = fopen(new_note_name, "r") ) ){
+        rename( old_note_name, new_note_name );
+    }
+    
+    fclose( tf );
 
     free( old_note_name );
     free( new_note_name );
