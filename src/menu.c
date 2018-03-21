@@ -58,12 +58,15 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
+// todo: allow escape to cancel delete and rename
 int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
     char *note_text = NULL;
 
     if( m == NULL )
         return -1;
+
+    m->has_changed_file = false;
 
     if( ch == KEY_F(9) ) {
         m->is_deleting_file = false;
@@ -189,9 +192,6 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             break;
         default:
             if(!m->is_renaming_file) {
-                m->is_deleting_file = false;
-                m->is_renaming_file = false;
-                m->has_changed_file = false;
                 pass_input_to_editor = true;
             }
             else ADD_CHAR_TO_RENAME_BUFFER
