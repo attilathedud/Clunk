@@ -79,7 +79,6 @@ void editor_handle_input( Editor *e, const int ch ) {
 
     // todo: add support for home/end, page up/down
     // todo: fix enter on first entering note
-    // todo: allow -%#!#% etc
     switch( ch ) {
         case KEY_UP:
             if( e->y == 0 && e->scroll_offset == 0 ) {
@@ -143,7 +142,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             SET_X_TO_BEGINNING
             break;
         default:
-            if( !( isalnum( ch ) || isspace( ch )) )
+            if( !isprint(ch) )
                 break;                
             buffer_insert_character( &(e->b), ch, e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_X
