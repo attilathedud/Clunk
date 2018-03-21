@@ -191,11 +191,11 @@ void menu_print( Menu *m ) {
     // todo: add more about text
     if( m->display_about_screen ) {
         mvprintw( 0, COLS/ 2, "##### #     #   # #   # #  #");
-        mvprintw( 1, COLS/ 2, "#     #     #   # # # # # #");
-        mvprintw( 2, COLS/ 2, "#     #     #   # #  ## #");
-        mvprintw( 3, COLS/ 2, "#     #     #   # #   # # #");
+        mvprintw( 1, COLS/ 2, "#     #     #   # # # # # #" );
+        mvprintw( 2, COLS/ 2, "#     #     #   # #  ## #"   );
+        mvprintw( 3, COLS/ 2, "#     #     #   # #   # # #" );
         mvprintw( 4, COLS/ 2, "##### ##### ##### #   # #  #");
-        mvprintw( 5, COLS/ 2, "      Just take notes.");
+        mvprintw( 5, COLS/ 2, "      Just take notes."      );
 
         mvprintw( 7, NOTES_OFFSET, "Clunk is a note taking application the stores notes locally.");
     }

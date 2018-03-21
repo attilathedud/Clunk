@@ -73,7 +73,7 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
 
     if( len > 0 && line != NULL ) {
         new_node->text = calloc( len + 1, sizeof( char ) );
-        // todo: fix alloc bug with this, inc alloc+ for longer strings
+        for( new_node->allocs = 0; (new_node->allocs + 1) * LINE_ALLOC_STEP < len; new_node->allocs++ );
         strncpy( new_node->text, line, len );
     }
 
@@ -97,7 +97,7 @@ void buffer_split_line( Buffer *b, const int x, const int index ) {
     if( new_node == NULL )
         return;
 
-    new_node->text = calloc(LINE_ALLOC_STEP * b->current->allocs, sizeof( char ));
+    new_node->text = calloc(LINE_ALLOC_STEP * (b->current->allocs + 1), sizeof( char ));
     new_node->allocs = b->current->allocs;
     memcpy(new_node->text, b->current->text + x, strlen( b->current->text ) - x );
     for( int i = strlen( b->current->text ); i > x; i-- ) {

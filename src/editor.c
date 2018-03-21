@@ -136,7 +136,6 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             break;
         case KEY_RETURN:
-            // todo: fix crash on beginning line
             buffer_split_line(&(e->b), e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_Y
             SET_X_TO_BEGINNING
