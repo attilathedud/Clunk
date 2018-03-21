@@ -77,8 +77,7 @@ void editor_handle_input( Editor *e, const int ch ) {
     if( e == NULL )
         return;
 
-    // todo: clean up
-    // todo: add support for home and end, page up/down
+    // todo: add support for home/end, page up/down
     switch( ch ) {
         case KEY_UP:
             if( e->y == 0 && e->scroll_offset == 0 ) {
@@ -117,7 +116,7 @@ void editor_handle_input( Editor *e, const int ch ) {
                 break;
             
             if( e->x + e->x_page_offset > NOTES_OFFSET ) {
-                buffer_remove_character( &(e->b), e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+                buffer_remove_character( &(e->b), e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
                 DECREASE_X
             }
             else {
@@ -128,7 +127,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             break;
         case KEY_TAB:
             for( int i = 0; i < 4; i++ ) {
-                buffer_insert_character( &(e->b), ' ', e->x - NOTES_OFFSET - 4 + e->x_page_offset + i, e->y + e->scroll_offset );
+                buffer_insert_character( &(e->b), ' ', e->x - TEXT_OFFSET + e->x_page_offset + i, e->y + e->scroll_offset );
             }
             e->x += 4;
             while( e->x > COLS - 2 ) {
@@ -138,14 +137,14 @@ void editor_handle_input( Editor *e, const int ch ) {
             break;
         case KEY_RETURN:
             // todo: fix crash on beginning line
-            buffer_split_line(&(e->b), e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+            buffer_split_line(&(e->b), e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_Y
             SET_X_TO_BEGINNING
             break;
         default:
             if( !( isalnum( ch ) || isspace( ch )) )
                 break;                
-            buffer_insert_character( &(e->b), ch, e->x - NOTES_OFFSET - 4 + e->x_page_offset, e->y + e->scroll_offset );
+            buffer_insert_character( &(e->b), ch, e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_X
             break;
     }
@@ -203,8 +202,8 @@ void editor_print( Editor *e ) {
     while( iter != NULL ) {
         if( iter->text != NULL ) {
             memset(buffer, 0, COLS * sizeof(char) );
-            strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - NOTES_OFFSET - 4 );
-            buffer[COLS - 1 - NOTES_OFFSET - 4] = '\0';
+            strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET );
+            buffer[COLS - 1 - TEXT_OFFSET] = '\0';
             mvprintw(output_line, NOTES_OFFSET, buffer);
         }
         clrtoeol();
