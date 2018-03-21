@@ -188,6 +188,7 @@ void menu_save_note( Menu *m, const char *text ) {
 }
 
 void menu_print( Menu *m ) {
+    // todo: add more about text
     if( m->display_about_screen ) {
         mvprintw( 0, COLS/ 2, "##### #     #   # #   # #  #");
         mvprintw( 1, COLS/ 2, "#     #     #   # # # # # #");
