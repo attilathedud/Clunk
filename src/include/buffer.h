@@ -5,7 +5,7 @@
 
 typedef struct node {
     char *text;
-    int allocs;
+    size_t allocs;
     struct node *next;
 } node_t;
 
@@ -16,11 +16,10 @@ typedef struct {
 
 void buffer_cleanup( Buffer * );
 void buffer_append_line( Buffer *, const char *, const size_t );
-size_t buffer_get_text_len( Buffer *, const int );
-void buffer_insert_character( Buffer *, const char, const int, const int );
-void buffer_remove_character( Buffer *, const int, const int );
-void buffer_remove_line( Buffer *, const int );
-void buffer_split_line( Buffer *, const int, const int );
-//todo: change index to size_t to account for large files
+size_t buffer_get_text_len( Buffer *, const size_t );
+void buffer_insert_character( Buffer *, const char, const size_t, const size_t );
+void buffer_remove_character( Buffer *, const size_t, const size_t );
+void buffer_remove_line( Buffer *, const size_t );
+void buffer_split_line( Buffer *, const size_t, const size_t );
 
 #endif

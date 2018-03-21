@@ -5,8 +5,8 @@
 #include "include/buffer.h"
 #include "include/consts.h"
 
-static void buffer_set_current_node( Buffer *b, const int index ) {
-    if( b == NULL || index < 0 )
+static void buffer_set_current_node( Buffer *b, const size_t index ) {
+    if( b == NULL )
         return;
 
     if( b->head == NULL ) {
@@ -52,8 +52,8 @@ void buffer_cleanup( Buffer *b ) {
     b->current = NULL;
 }
 
-size_t buffer_get_text_len( Buffer *b, const int index ) {
-    if( b == NULL || index < 0 )
+size_t buffer_get_text_len( Buffer *b, const size_t index ) {
+    if( b == NULL )
         return 0;
 
     buffer_set_current_node( b, index );
@@ -87,8 +87,8 @@ void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
     }
 }
 
-void buffer_split_line( Buffer *b, const int x, const int index ) {
-    if( b == NULL || index < 0 || x < 0 )
+void buffer_split_line( Buffer *b, const size_t x, const size_t index ) {
+    if( b == NULL )
         return;
 
     buffer_set_current_node( b, index );
@@ -108,8 +108,8 @@ void buffer_split_line( Buffer *b, const int x, const int index ) {
     new_node->next = next_node;
 }
 
-void buffer_insert_character( Buffer *b, const char ch, const int x, const int index ) {
-    if( b == NULL || index < 0 || x < 0 )
+void buffer_insert_character( Buffer *b, const char ch, const size_t x, const size_t index ) {
+    if( b == NULL )
         return;
 
     buffer_set_current_node( b, index );
@@ -142,8 +142,8 @@ void buffer_insert_character( Buffer *b, const char ch, const int x, const int i
     b->current->text[ x ] = ch;
 }
 
-void buffer_remove_character( Buffer *b, const int x, const int index ) {
-    if( b == NULL || index < 0 )
+void buffer_remove_character( Buffer *b, const size_t x, const size_t index ) {
+    if( b == NULL )
         return;
 
     buffer_set_current_node( b, index );
@@ -157,10 +157,10 @@ void buffer_remove_character( Buffer *b, const int x, const int index ) {
     b->current->text[ strlen( b->current->text ) ] = 0;
 }
 
-void buffer_remove_line( Buffer *b, const int index ) {
+void buffer_remove_line( Buffer *b, const size_t index ) {
     node_t *removed_node;
 
-    if( b == NULL || index < 0 )
+    if( b == NULL )
         return;
 
     buffer_set_current_node(b, index);

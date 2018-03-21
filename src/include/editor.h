@@ -10,10 +10,10 @@
 
 typedef struct {
     Buffer b;
-    int x;
-    int y;
-    int scroll_offset;
-    int x_page_offset;
+    size_t x;
+    size_t y;
+    size_t scroll_offset;
+    size_t x_page_offset;
 } Editor;
 
 void editor_cleanup( Editor * );
