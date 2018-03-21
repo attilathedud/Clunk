@@ -99,11 +99,12 @@ void buffer_split_line( Buffer *b, const size_t x, const size_t index ) {
 
     new_node->text = calloc(LINE_ALLOC_STEP * (b->current->allocs + 1), sizeof( char ));
     new_node->allocs = b->current->allocs;
-    memcpy(new_node->text, b->current->text + x, strlen( b->current->text ) - x );
-    for( int i = strlen( b->current->text ); i > x; i-- ) {
-        buffer_remove_character(b, i, index );
+    if( b->current->text != NULL ) {
+        memcpy(new_node->text, b->current->text + x, strlen( b->current->text ) - x );
+        for( int i = strlen( b->current->text ); i > x; i-- ) {
+            buffer_remove_character(b, i, index );
+        }
     }
-
     b->current->next = new_node;
     new_node->next = next_node;
 }
