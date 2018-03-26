@@ -121,6 +121,7 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             STORAGE_RESET
             m->selected_file_index = storage_find_note_index(&(m->s), created_note_name);
             m->is_renaming_file = true;
+            m->has_changed_file = true;
             memset( m->rename_buffer, 0, sizeof( m->rename_buffer ));
             break;
         case KEY_F(7):
