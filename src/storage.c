@@ -99,7 +99,7 @@ int storage_get_notes( Storage *s ) {
     s->allocs++;
 
     while ((dp = readdir (dir)) != NULL) {
-        if( strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".DS_Store") == 0 )
+        if( dp->d_name[0] == '.' )
             continue;
 
         s->files[s->file_count] = calloc(1, strlen(dp->d_name) + 1);

@@ -58,7 +58,6 @@ int menu_init( Menu *m ) {
     return 0;
 }
 
-// todo: allow escape to cancel delete and rename
 int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
     char *note_text = NULL;
