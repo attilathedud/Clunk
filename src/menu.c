@@ -122,6 +122,8 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
         case KEY_F(6):
             storage_create_note(&(m->s));
             STORAGE_RESET
+            m->is_renaming_file = true;
+            memset( m->rename_buffer, 0, sizeof( m->rename_buffer ));
             break;
         case KEY_F(7):
             if( m->is_renaming_file ) {
@@ -204,6 +206,17 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             m->is_deleting_file = false;
             m->is_renaming_file = false;
             m->has_changed_file = false;
+            break;
+        case KEY_DELETE:
+            if( !m->is_renaming_file ) {
+                pass_input_to_editor = true;
+                break;
+            }
+
+            if( strlen( m->rename_buffer ) > 0 ) {
+                m->rename_buffer[ strlen(m->rename_buffer) - 1 ] = 0;
+            }
+
             break;
         default:
             if(!m->is_renaming_file) {

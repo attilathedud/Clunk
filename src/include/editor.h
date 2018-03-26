@@ -3,7 +3,6 @@
 
 #include "buffer.h"
 
-#define KEY_DELETE 127
 #define KEY_TAB 9
 #define KEY_RETURN 10
 #define TEXT_OFFSET NOTES_OFFSET - 4
