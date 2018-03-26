@@ -125,6 +125,11 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             STORAGE_RESET
             break;
         case KEY_F(7):
+            if( m->is_renaming_file ) {
+                m->is_renaming_file = false;
+                break;
+            }
+
             if( m->s.file_count > 0 ) {
                 m->is_renaming_file = true;
                 m->is_deleting_file = false;
@@ -132,6 +137,11 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             }
             break;
         case KEY_F(8):
+            if( m->is_deleting_file ) {
+                m->is_deleting_file = false;
+                break;
+            }
+
             if( m->s.file_count > 0 ) {
                 m->is_deleting_file = true;
                 m->is_renaming_file = false;
@@ -189,6 +199,12 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             STORAGE_RESET
 
             m->is_renaming_file = false;
+            break;
+        //todo: investigate why this takes so long
+        case KEY_ESC:
+            m->is_deleting_file = false;
+            m->is_renaming_file = false;
+            m->has_changed_file = false;
             break;
         default:
             if(!m->is_renaming_file) {

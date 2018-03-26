@@ -9,6 +9,7 @@
 #define KEY_LOWER_N 110
 #define KEY_UPPER_N 78
 #define KEY_RETURN 10
+#define KEY_ESC 27
 
 #define RENAME_BUFFER_LEN 128
 
