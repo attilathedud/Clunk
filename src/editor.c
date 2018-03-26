@@ -151,7 +151,7 @@ void editor_handle_input( Editor *e, const int ch ) {
     if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
 }
 
-char *editor_get_text( Editor *e ) {
+char *editor_get_text( const Editor *e ) {
     char *text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
     int allocs = 1;
 
@@ -180,7 +180,7 @@ char *editor_get_text( Editor *e ) {
     return text;
 }
 
-void editor_print( Editor *e ) {
+void editor_print( const Editor *e ) {
     int output_line = 0;
 
     if( e == NULL )
@@ -197,7 +197,8 @@ void editor_print( Editor *e ) {
     while( iter != NULL && output_line < LINES - 1) {
         if( iter->text != NULL ) {
             memset(buffer, 0, COLS * sizeof(char) );
-            strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET );
+            if( e->x_page_offset < strlen(iter->text) )
+                strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET );
             buffer[COLS - 1 - TEXT_OFFSET] = '\0';
             mvprintw(output_line, NOTES_OFFSET, buffer);
         }
@@ -210,7 +211,7 @@ void editor_print( Editor *e ) {
     free( buffer );
 }
 
-void editor_print_cursor( Editor *e ) {
+void editor_print_cursor( const Editor *e ) {
     if( e == NULL )
         return;
     
