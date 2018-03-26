@@ -39,6 +39,7 @@ void editor_cleanup( Editor *e ) {
     e->y = 0;
     e->scroll_offset = 0;
     e->x_page_offset = 0;
+    e->is_modified = false;
 }
 
 void editor_load_file( Editor *e, const char *home_directory, const char *file ) {
@@ -124,6 +125,7 @@ void editor_handle_input( Editor *e, const int ch ) {
                 buffer_remove_line( &(e->b), e->y + e->scroll_offset );
                 DECREASE_Y
             }
+            e->is_modified = true;
             break;
         case KEY_TAB:
             for( int i = 0; i < 4; i++ ) {
@@ -134,24 +136,27 @@ void editor_handle_input( Editor *e, const int ch ) {
                 e->x_page_offset++;
                 e->x--;
             }
+            e->is_modified = true;
             break;
         case KEY_RETURN:
             buffer_split_line(&(e->b), e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_Y
             SET_X_TO_BEGINNING
+            e->is_modified = true;
             break;
         default:
             if( !isprint(ch) )
                 break;                
             buffer_insert_character( &(e->b), ch, e->x - TEXT_OFFSET + e->x_page_offset, e->y + e->scroll_offset );
             INCREASE_X
+            e->is_modified = true;
             break;
     }
 
     if( e->x < NOTES_OFFSET ) e->x = NOTES_OFFSET;
 }
 
-char *editor_get_text( const Editor *e ) {
+char *editor_get_text( Editor *e ) {
     char *text = calloc( LINE_ALLOC_STEP * 10, sizeof( char ) );
     int allocs = 1;
 
@@ -176,6 +181,9 @@ char *editor_get_text( const Editor *e ) {
 
         iter = iter->next;
     }
+
+    // this is only called when saving, so toggle the modified flag off here
+    e->is_modified = false;
 
     return text;
 }
@@ -209,6 +217,10 @@ void editor_print( const Editor *e ) {
     }
 
     free( buffer );
+
+    if( e->is_modified ) {
+        mvprintw( LINES - 2, 0, "Modified *" );
+    }
 }
 
 void editor_print_cursor( const Editor *e ) {
