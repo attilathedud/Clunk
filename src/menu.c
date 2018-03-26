@@ -47,7 +47,7 @@ int menu_init( Menu *m ) {
     }
 
     if( m->s.file_count == 0 ) {
-        storage_create_note(&(m->s));
+        storage_create_note(&(m->s), NULL);
         storage_cleanup(&(m->s));
         storage_get_notes(&(m->s));
     }
@@ -61,6 +61,8 @@ int menu_init( Menu *m ) {
 int menu_handle_input( Menu *m, Editor *e, const int ch ) {
     int pass_input_to_editor = false;
     char *note_text = NULL;
+    //todo: explain why okay
+    char created_note_name[128] = { 0 };
 
     if( m == NULL )
         return -1;
@@ -91,13 +93,10 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                     m->scroll_offset = 0;
                 }
             }
-
             if( m->selected_file_index - m->scroll_offset < 0 ) {
                 m->scroll_offset--;
             }
-
             m->has_changed_file = true;
-
             break;
         case KEY_F(2):
             m->selected_file_index++;
@@ -105,13 +104,10 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
                 m->selected_file_index = 0;
                 m->scroll_offset = 0;
             }
-
             if( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 > LINES - 1 ) {
                 m->scroll_offset++;
             }
-
             m->has_changed_file = true;
-
             break;
         case KEY_F(5):
             SAVE_NOTE
@@ -120,8 +116,10 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             attroff(COLOR_PAIR(1));
             break;
         case KEY_F(6):
-            storage_create_note(&(m->s));
+            memset(created_note_name, 0, sizeof( created_note_name ));
+            storage_create_note(&(m->s), created_note_name);
             STORAGE_RESET
+            m->selected_file_index = storage_find_note_index(&(m->s), created_note_name);
             m->is_renaming_file = true;
             memset( m->rename_buffer, 0, sizeof( m->rename_buffer ));
             break;

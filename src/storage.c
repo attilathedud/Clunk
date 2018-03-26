@@ -121,9 +121,10 @@ int storage_get_notes( Storage *s ) {
     return 0;
 }
 
-int storage_create_note( const Storage *s ) {
+int storage_create_note( const Storage *s, char *created_name ) {
     char *note_name = NULL;
     FILE *tf = NULL;
+    int i = 0;
 
     if( s == NULL )
         return -1;
@@ -136,7 +137,7 @@ int storage_create_note( const Storage *s ) {
 
     note_name = calloc(strlen(s->home_directory) + strlen("/") + strlen(note_prefix) + digit_count + 1, sizeof(char));
 
-    for( int i = 0; i < s->file_count + 1; i++ ) {
+    for( i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
         if( ( tf = fopen(note_name, "r") ) ){
             fclose( tf );
@@ -147,6 +148,10 @@ int storage_create_note( const Storage *s ) {
             fclose( tf );
             break;
         }
+    }
+
+    if( created_name != NULL ) {
+        sprintf(created_name, "%s%d", note_prefix, i + 1 );
     }
  
     if( note_name != NULL ) {
@@ -219,4 +224,19 @@ void storage_rename_note( const Storage *s, const int file_index, const char *na
 
     free( old_note_name );
     free( new_note_name );
+}
+
+int storage_find_note_index(const Storage *s, const char *note_name) {
+    int index = 0;
+    
+    if( note_name == NULL )
+        return -1;
+
+    for( int i = 0; i < s->file_count; i++ ) {
+        if( strcmp( s->files[ i ], note_name ) == 0 ) {
+            return i;
+        }
+    }
+
+    return index;
 }
