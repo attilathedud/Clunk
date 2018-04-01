@@ -203,11 +203,9 @@ void editor_print( const Editor *e ) {
     char *buffer = calloc( COLS, sizeof( char ));
 
     while( iter != NULL && output_line < LINES - 1) {
-        attroff(COLOR_PAIR(1));
-
         if( iter->text != NULL ) {
             if( iter->text[ 0 ] == '^' ) {
-                    attron(COLOR_PAIR(1));
+                attron(COLOR_PAIR(1));
             }
 
             memset(buffer, 0, COLS * sizeof(char) );
@@ -215,6 +213,10 @@ void editor_print( const Editor *e ) {
                 strncpy( buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET );
             buffer[COLS - 1 - TEXT_OFFSET] = '\0';
             mvprintw(output_line, NOTES_OFFSET, buffer);
+
+            if( iter->text[ 0 ] == '^' ) {
+                attroff(COLOR_PAIR(1));
+            }
         }
         clrtoeol();
 
@@ -227,8 +229,6 @@ void editor_print( const Editor *e ) {
     if( e->is_modified ) {
         mvprintw( LINES - 2, 0, "Modified *" );
     }
-
-    attroff(COLOR_PAIR(1));
 }
 
 void editor_print_cursor( const Editor *e ) {
