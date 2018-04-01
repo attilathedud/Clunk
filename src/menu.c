@@ -6,7 +6,7 @@
 #include "include/storage.h"
 #include "include/menu.h"
 
-#define ABOUT_TEXT_LINES 15
+#define ABOUT_TEXT_LINES 16
 
 #define ADD_CHAR_TO_RENAME_BUFFER   if( m->is_renaming_file ) {\
                                         if( strlen( m->rename_buffer ) < RENAME_BUFFER_LEN ) {\
@@ -31,9 +31,10 @@ static char about_text[ABOUT_TEXT_LINES][100] = {
     "\0",
     "Clunk focuses on taking notes and getting out of the way.\0",
     "\0",
-    "- Notes are stored locally in ~/.clunk/\0",
-    "- All prompts will be in the lower left\0",
-    "- Notes are NOT automatically saved    \0",
+    "- Notes are stored locally in ~/.clunk/ \0",
+    "- All prompts will be in the lower left \0",
+    "- Notes are NOT automatically saved     \0",
+    "- Lines beginning with ^ are highlighted\0",
     "\0",
     "Code is available at github.com/attilathedud/Clunk\0"
 };
