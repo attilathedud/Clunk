@@ -86,14 +86,16 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             else DECREASE_Y
             
-            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET )
+            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET ) {
                 SET_X_TO_LINE_LENGTH(e->y)
+            }
             break;
         case KEY_DOWN:
             INCREASE_Y
 
-            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET )
+            if( e->x + e->x_page_offset > buffer_get_text_len( &(e->b), e->scroll_offset + e->y ) + NOTES_OFFSET ) {
                 SET_X_TO_LINE_LENGTH(e->y)
+            }
             break;
         case KEY_LEFT:
             if( e->x + e->x_page_offset == NOTES_OFFSET ) {
