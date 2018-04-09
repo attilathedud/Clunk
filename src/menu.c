@@ -198,6 +198,11 @@ int menu_handle_input( Menu *m, Editor *e, const int ch ) {
             SAVE_NOTE
             storage_rename_note(&(m->s), m->selected_file_index, m->rename_buffer );
             STORAGE_RESET
+            m->scroll_offset = 0;
+            m->selected_file_index = storage_find_note_index(&(m->s), m->rename_buffer);
+            while( ( m->selected_file_index - m->scroll_offset + 1 ) * 2 > LINES - 1 ) {
+                m->scroll_offset++;
+            }
 
             m->is_renaming_file = false;
             break;
