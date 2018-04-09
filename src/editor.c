@@ -115,7 +115,7 @@ void editor_handle_input( Editor *e, const int ch ) {
             }
             break;
         case KEY_DELETE:
-            if( e->x + e->x_page_offset == NOTES_OFFSET && e->y == 0 ) 
+            if( e->x + e->x_page_offset == NOTES_OFFSET && e->y + e->scroll_offset == 0 ) 
                 break;
             
             if( e->x + e->x_page_offset > NOTES_OFFSET ) {
