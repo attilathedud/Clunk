@@ -61,6 +61,7 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
     if( f == NULL )
         return;
 
+    // todo: fix issue with fgetln not being declared on linux
     while( ( line = fgetln( f, &len ) ) != NULL ) {
         if( line[ len - 1 ] == '\n' ) {
             line[ len - 1 ] = 0;
