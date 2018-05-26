@@ -137,14 +137,12 @@ int storage_create_note( const Storage *s, char *created_name ) {
 
     note_name = calloc(strlen(s->home_directory) + strlen("/") + strlen(note_prefix) + digit_count + 1, sizeof(char));
 
-    // todo: fix crash when init with no files
     for( i = 0; i < s->file_count + 1; i++ ) {
         sprintf(note_name, "%s/%s%d", s->home_directory, note_prefix, i + 1);
         if( ( tf = fopen(note_name, "r") ) ){
             fclose( tf );
         }
         else {
-            fclose( tf );
             tf = fopen( note_name, "w" );
             fclose( tf );
             break;

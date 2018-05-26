@@ -60,13 +60,15 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
     f = fopen(file_path, "r");
     if( f == NULL )
         return;
-
-    // todo: fix issue with fgetln not being declared on linux
-    while( ( line = fgetln( f, &len ) ) != NULL ) {
-        if( line[ len - 1 ] == '\n' ) {
-            line[ len - 1 ] = 0;
-        }
+        
+    while( getline( &line, &len, f ) != -1 ) {
         buffer_append_line( &(e->b), line, len );
+
+        if( line != NULL ) {
+            free( line );
+            line = NULL;
+        }
+        len = 0;        
     }
 
     fclose(f);
