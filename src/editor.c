@@ -182,7 +182,8 @@ char *editor_get_text( Editor *e ) {
         if( iter->text != NULL ) 
             strcat( text, iter->text );
 
-        strcat( text, "\n" );
+        if( iter->text[ strlen(iter->text) - 1 ] != '\n' )
+            strcat( text, "\n" );
 
         iter = iter->next;
     }
