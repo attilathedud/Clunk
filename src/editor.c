@@ -45,7 +45,7 @@ void editor_cleanup( Editor *e ) {
 void editor_load_file( Editor *e, const char *home_directory, const char *file ) {
     FILE *f = NULL;
     char *line = NULL;
-    size_t len = 0;
+    size_t len = 0, n = 0;
 
     if( e == NULL || file == NULL )
         return;
@@ -61,14 +61,18 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
     if( f == NULL )
         return;
         
-    while( getline( &line, &len, f ) != -1 ) {
+    while( (len = getline( &line, &n, f ) ) != -1 ) {
+        if( line[ len - 1 ] == '\n' ) {
+            line[ len - 1 ] = 0;
+        }
+
         buffer_append_line( &(e->b), line, len );
 
         if( line != NULL ) {
             free( line );
             line = NULL;
         }
-        len = 0;        
+        n = 0;        
     }
 
     fclose(f);
@@ -182,8 +186,7 @@ char *editor_get_text( Editor *e ) {
         if( iter->text != NULL ) 
             strcat( text, iter->text );
 
-        if( iter->text[ strlen(iter->text) - 1 ] != '\n' )
-            strcat( text, "\n" );
+        strcat( text, "\n" );
 
         iter = iter->next;
     }

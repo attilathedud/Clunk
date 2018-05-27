@@ -60,7 +60,7 @@ size_t buffer_get_text_len( Buffer *b, const size_t index ) {
     if( b->current->text == NULL )
         return 0;
 
-    return strlen(b->current->text) - 1;
+    return strlen(b->current->text);
 }
 
 void buffer_append_line( Buffer *b, const char *line, const size_t len ) {
