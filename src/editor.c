@@ -75,6 +75,11 @@ void editor_load_file( Editor *e, const char *home_directory, const char *file )
         n = 0;        
     }
 
+    if( line != NULL ) {
+        free( line );
+        line = NULL;
+    }
+
     fclose(f);
 
     if( file_path != NULL)
