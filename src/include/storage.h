@@ -3,7 +3,8 @@
 
 #define NOTES_ALLOC_STEP 64
 
-typedef struct {
+typedef struct
+{
     int file_count;
     int allocs;
     char **files;
@@ -14,8 +15,8 @@ int storage_get_notes(Storage *);
 void storage_cleanup(Storage *);
 int storage_create_note(const Storage *, char *);
 int storage_delete_note(const Storage *, const int);
-void storage_save_note( const Storage *, const int, const char * );
-void storage_rename_note( const Storage *, const int, const char *);
-int storage_find_note_index( const Storage *, const char *);
+void storage_save_note(const Storage *, const int, const char *);
+void storage_rename_note(const Storage *, const int, const char *);
+int storage_find_note_index(const Storage *, const char *);
 
 #endif

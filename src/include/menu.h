@@ -12,7 +12,8 @@
 
 #define RENAME_BUFFER_LEN 128
 
-typedef struct {
+typedef struct
+{
     Storage s;
     int selected_file_index;
     int scroll_offset;
@@ -20,13 +21,13 @@ typedef struct {
     int is_renaming_file;
     int has_changed_file;
     int display_about_screen;
-    char rename_buffer[ RENAME_BUFFER_LEN ];
+    char rename_buffer[RENAME_BUFFER_LEN];
 } Menu;
 
-int menu_init( Menu * );
-int menu_handle_input( Menu *, Editor *, const int );
-void menu_print( Menu * );
-void menu_cleanup( Menu * );
-void menu_save_note( Menu *, const char * );
+int menu_init(Menu *);
+int menu_handle_input(Menu *, Editor *, const int);
+void menu_print(Menu *);
+void menu_cleanup(Menu *);
+void menu_save_note(Menu *, const char *);
 
 #endif

@@ -7,7 +7,8 @@
 #define KEY_RETURN 10
 #define TEXT_OFFSET NOTES_OFFSET - 4
 
-typedef struct {
+typedef struct
+{
     Buffer b;
     size_t x;
     size_t y;
@@ -16,11 +17,11 @@ typedef struct {
     int is_modified;
 } Editor;
 
-void editor_cleanup( Editor * );
-void editor_load_file( Editor *, const char *, const char * );
-void editor_handle_input( Editor *, const int );
-void editor_print( const Editor * );
-void editor_print_cursor( const Editor * );
-char *editor_get_text( Editor * );
+void editor_cleanup(Editor *);
+void editor_load_file(Editor *, const char *, const char *);
+void editor_handle_input(Editor *, const int);
+void editor_print(const Editor *);
+void editor_print_cursor(const Editor *);
+char *editor_get_text(Editor *);
 
 #endif
