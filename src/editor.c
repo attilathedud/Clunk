@@ -196,6 +196,12 @@ void editor_handle_input(Editor *e, const int ch)
         SET_X_TO_BEGINNING
         e->is_modified = true;
         break;
+    case KEY_HOME:
+        SET_X_TO_BEGINNING
+        break;
+    case KEY_END:
+        SET_X_TO_LINE_LENGTH(e->y)
+        break;
     default:
         if (!isprint(ch))
             break;
