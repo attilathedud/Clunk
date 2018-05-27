@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     {
         erase();
 
-        // if the menu is controlled, don't pass input to editor
+        // If the menu is controlled, don't pass input to editor
         if (menu_handle_input(&m, &e, ch))
         {
             editor_handle_input(&e, ch);
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
         menu_print(&m);
 
-        // print separator line
+        // Print separator line
         mvvline(0, MENU_OFFSET, ACS_VLINE, LINES - 1 - m.is_renaming_file);
         print_help_line();
 

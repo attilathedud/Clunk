@@ -115,7 +115,6 @@ void editor_handle_input(Editor *e, const int ch)
     if (e == NULL)
         return;
 
-    // todo: add support for home/end, page up/down
     switch (ch)
     {
     case KEY_UP:
@@ -242,7 +241,7 @@ char *editor_get_text(Editor *e)
         iter = iter->next;
     }
 
-    // this is only called when saving, so toggle the modified flag off here
+    // This is only called when saving, so toggle the modified flag off here
     e->is_modified = false;
 
     return text;

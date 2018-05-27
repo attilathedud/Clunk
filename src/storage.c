@@ -55,7 +55,6 @@ static int get_or_create_notes_directory(Storage *s, DIR **dir)
         strcat(s->home_directory, "/.clunk");
     }
 
-    // todo: fix memory leak of dir
     *dir = opendir(s->home_directory);
     if (*dir == NULL)
     {

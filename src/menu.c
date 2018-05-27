@@ -70,7 +70,8 @@ int menu_handle_input(Menu *m, Editor *e, const int ch)
 {
     int pass_input_to_editor = false;
     char *note_text = NULL;
-    //todo: explain why okay
+
+    // The rename buffer enforces a limit of 128 characters before adding to the buffer
     char created_note_name[128] = {0};
 
     if (m == NULL)
@@ -234,7 +235,7 @@ int menu_handle_input(Menu *m, Editor *e, const int ch)
 
         m->is_renaming_file = false;
         break;
-    //todo: investigate why this takes so long
+    // For some reason, ncurses traps signals to esc and won't pass them immediately to a user program
     case KEY_ESC:
         m->is_deleting_file = false;
         m->is_renaming_file = false;
