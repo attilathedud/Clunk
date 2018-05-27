@@ -118,6 +118,8 @@ int storage_get_notes( Storage *s ) {
 
     qsort( s->files, s->file_count, sizeof (char *), natural_sort );
 
+    free(dir);
+
     return 0;
 }
 
