@@ -141,7 +141,7 @@ void editor_handle_input(Editor *e, const int ch)
     case KEY_LEFT:
         if (e->x + e->x_page_offset == NOTES_OFFSET)
         {
-            if (e->y + e->scroll_offset > 0) 
+            if (e->y + e->scroll_offset > 0)
             {
                 SET_X_TO_LINE_LENGTH(e->y - 1)
             }
@@ -201,6 +201,18 @@ void editor_handle_input(Editor *e, const int ch)
         break;
     case KEY_END:
         SET_X_TO_LINE_LENGTH(e->y)
+        break;
+    case KEY_PPAGE:
+        for (int i = 0; i < LINES - 1; i++)
+        {
+            DECREASE_Y
+        }
+        break;
+    case KEY_NPAGE:
+        for (int i = 0; i < LINES - 1; i++)
+        {
+            INCREASE_Y
+        }
         break;
     default:
         if (!isprint(ch))
