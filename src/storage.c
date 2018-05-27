@@ -219,7 +219,8 @@ void storage_rename_note( const Storage *s, const int file_index, const char *na
         rename( old_note_name, new_note_name );
     }
     
-    fclose( tf );
+    if( tf != NULL )
+        fclose( tf );
 
     free( old_note_name );
     free( new_note_name );
