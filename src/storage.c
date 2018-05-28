@@ -48,7 +48,9 @@ static int get_or_create_notes_directory(Storage *s, DIR **dir)
 
     if (s->home_directory == NULL)
     {
-        s->home_directory = getenv("HOME");
+        char *user_env = getenv("HOME");
+        s->home_directory = calloc(strlen(user_env) + strlen("/.clunk") + 1, sizeof(char));
+        strcpy(s->home_directory, user_env);
         if (s->home_directory == NULL)
             return -1;
 
@@ -74,7 +76,7 @@ void storage_cleanup(Storage *s)
     if (s == NULL)
         return;
 
-    for (int i = 0; i < s->file_count; i++)
+    for (int i = 0; i < s->file_count && s->files != NULL; i++)
     {
         if (s->files[i] != NULL)
         {
@@ -91,6 +93,12 @@ void storage_cleanup(Storage *s)
 
     s->file_count = 0;
     s->allocs = 0;
+
+    if( s->home_directory != NULL ) 
+    {
+        free( s->home_directory);
+        s->home_directory = NULL;
+    }
 }
 
 int storage_get_notes(Storage *s)
@@ -254,8 +262,6 @@ void storage_rename_note(const Storage *s, const int file_index, const char *nam
 
 int storage_find_note_index(const Storage *s, const char *note_name)
 {
-    int index = 0;
-
     if (note_name == NULL)
         return -1;
 
@@ -267,5 +273,5 @@ int storage_find_note_index(const Storage *s, const char *note_name)
         }
     }
 
-    return index;
+    return -1;
 }
