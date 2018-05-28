@@ -98,40 +98,49 @@ int menu_handle_input(Menu *m, Editor *e, const int ch)
     switch (ch)
     {
     case KEY_F(1):
-        m->selected_file_index--;
-        if (m->selected_file_index < 0)
+        if (m->s.file_count > 0)
         {
-            m->selected_file_index = m->s.file_count - 1;
-            m->scroll_offset = m->s.file_count + 1 - LINES / 2;
-            if (m->scroll_offset < 0)
+            m->selected_file_index--;
+            if (m->selected_file_index < 0)
             {
-                m->scroll_offset = 0;
+                m->selected_file_index = m->s.file_count - 1;
+                m->scroll_offset = m->s.file_count + 1 - LINES / 2;
+                if (m->scroll_offset < 0)
+                {
+                    m->scroll_offset = 0;
+                }
             }
+            if (m->selected_file_index - m->scroll_offset < 0)
+            {
+                m->scroll_offset--;
+            }
+            m->has_changed_file = true;
         }
-        if (m->selected_file_index - m->scroll_offset < 0)
-        {
-            m->scroll_offset--;
-        }
-        m->has_changed_file = true;
         break;
     case KEY_F(2):
-        m->selected_file_index++;
-        if (m->selected_file_index > m->s.file_count - 1)
+        if (m->s.file_count > 0)
         {
-            m->selected_file_index = 0;
-            m->scroll_offset = 0;
+            m->selected_file_index++;
+            if (m->selected_file_index > m->s.file_count - 1)
+            {
+                m->selected_file_index = 0;
+                m->scroll_offset = 0;
+            }
+            if ((m->selected_file_index - m->scroll_offset + 1) * 2 > LINES - 1)
+            {
+                m->scroll_offset++;
+            }
+            m->has_changed_file = true;
         }
-        if ((m->selected_file_index - m->scroll_offset + 1) * 2 > LINES - 1)
-        {
-            m->scroll_offset++;
-        }
-        m->has_changed_file = true;
         break;
     case KEY_F(5):
-        SAVE_NOTE
-        attron(COLOR_PAIR(1));
-        mvprintw(LINES - 2, 0, "Note saved");
-        attroff(COLOR_PAIR(1));
+        if (m->s.file_count > 0)
+        {
+            SAVE_NOTE
+            attron(COLOR_PAIR(1));
+            mvprintw(LINES - 2, 0, "Note saved");
+            attroff(COLOR_PAIR(1));
+        }
         break;
     case KEY_F(6):
         memset(created_note_name, 0, sizeof(created_note_name));
