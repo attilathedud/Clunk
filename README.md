@@ -1,7 +1,7 @@
 # Clunk
 ![Clunk Screenshot](https://i.imgur.com/1sPrqgk.png)
 
-### About
+## About
 Clunk is a terminal-based note-taking program that focuses on taking notes and getting out of the way. Some features:
 - Notes are stored locally in ~/.clunk/
 - All prompts will be in the lower left
@@ -9,9 +9,9 @@ Clunk is a terminal-based note-taking program that focuses on taking notes and g
 - Lines beginning with ^ are highlighted
 - Works on any system with ncurses installed
 
-### Installation
+## Installation
 The only dependency to build is ncurses. To install, simply clone the source and run `make`. A `build` folder will be created with the executable inside.
 
-### Testing
+## Testing
 The tests are built with [Criterion.](https://github.com/Snaipe/Criterion) To execute them, run `make tests` and then run the `test\clunk_tests` executable.
 
