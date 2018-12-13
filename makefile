@@ -4,7 +4,7 @@ TEST_LIBS = -lcriterion -I src/
 
 INCLUDEDIR = include
 SOURCEDIR = src
-TESTDIR = tests
+TESTDIR = src_tests
 
 DEPS = $(wildcard $(INCLUDEDIR)/*.h) 
 SOURCES = $(wildcard $(SOURCEDIR)/*.c)
