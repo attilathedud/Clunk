@@ -296,7 +296,7 @@ void editor_print(const Editor *e)
             if (e->x_page_offset < strlen(iter->text))
                 strncpy(buffer, iter->text + e->x_page_offset, COLS - 1 - TEXT_OFFSET);
             buffer[COLS - 1 - TEXT_OFFSET] = '\0';
-            mvprintw(output_line, NOTES_OFFSET, buffer);
+            mvaddstr(output_line, NOTES_OFFSET, buffer);
 
             if (iter->text[0] == '^')
             {

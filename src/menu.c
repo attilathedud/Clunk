@@ -314,13 +314,13 @@ void menu_print(Menu *m)
                 move((i * 2) + 1, 5);
                 printw(" ");
                 note_title_buffer[MENU_OFFSET - 6] = '\0';
-                printw(note_title_buffer);
+                addstr(note_title_buffer);
                 printw(" ");
                 attroff(COLOR_PAIR(1));
             }
             else
             {
-                mvprintw((i * 2) + 1, 1, note_title_buffer);
+                mvaddstr((i * 2) + 1, 1, note_title_buffer);
             }
         }
         free(note_title_buffer);
@@ -335,7 +335,7 @@ void menu_print(Menu *m)
         {
             attron(COLOR_PAIR(1));
             mvprintw(LINES - 2, 0, "Name (enter): ");
-            printw(m->rename_buffer);
+            addstr(m->rename_buffer);
             attroff(COLOR_PAIR(1));
         }
     }
