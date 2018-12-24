@@ -203,12 +203,14 @@ void editor_handle_input(Editor *e, const int ch)
         SET_X_TO_LINE_LENGTH(e->y)
         break;
     case KEY_PPAGE:
+    case KEY_SLEFT:
         for (int i = 0; i < LINES - 1; i++)
         {
             DECREASE_Y
         }
         break;
     case KEY_NPAGE:
+    case KEY_SRIGHT: 
         for (int i = 0; i < LINES - 1; i++)
         {
             INCREASE_Y
