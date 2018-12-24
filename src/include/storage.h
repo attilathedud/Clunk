@@ -11,7 +11,7 @@ typedef struct
     char *home_directory;
 } Storage;
 
-int storage_get_notes(Storage *);
+int storage_get_notes(Storage *, char *);
 void storage_cleanup(Storage *);
 int storage_create_note(const Storage *, char *);
 int storage_delete_note(const Storage *, const int);

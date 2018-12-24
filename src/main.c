@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     init_pair(1, COLOR_BLACK, COLOR_CYAN);
     use_default_colors();
 
-    if (menu_init(&m) == -1)
+    if (menu_init(&m, argv[1]) == -1)
     {
         refresh();
         endwin();

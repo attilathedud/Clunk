@@ -24,7 +24,7 @@
 
 #define STORAGE_RESET         \
     storage_cleanup(&(m->s)); \
-    storage_get_notes(&(m->s));
+    storage_get_notes(&(m->s), m->notes_directory);
 
 static char about_text[ABOUT_TEXT_LINES][100] = {
     "##### #     #   # #   # #  #\0",
@@ -43,12 +43,14 @@ static char about_text[ABOUT_TEXT_LINES][100] = {
     "\0",
     "Code is available at github.com/attilathedud/Clunk\0"};
 
-int menu_init(Menu *m)
+int menu_init(Menu *m, char *notes_directory)
 {
     if (m == NULL)
         return -1;
 
-    if (storage_get_notes(&(m->s)) == -1)
+    m->notes_directory = notes_directory;
+
+    if (storage_get_notes(&(m->s), m->notes_directory) == -1)
     {
         return -1;
     }
@@ -57,7 +59,7 @@ int menu_init(Menu *m)
     {
         storage_create_note(&(m->s), NULL);
         storage_cleanup(&(m->s));
-        storage_get_notes(&(m->s));
+        storage_get_notes(&(m->s), m->notes_directory);
     }
 
     m->has_changed_file = true;

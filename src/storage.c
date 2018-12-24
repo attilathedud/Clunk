@@ -41,20 +41,33 @@ static int natural_sort(const void *a, const void *b)
     }
 }
 
-static int get_or_create_notes_directory(Storage *s, DIR **dir)
+static int get_or_create_notes_directory(Storage *s, char *notes_directory, 
+        DIR **dir)
 {
     if (s == NULL)
         return -1;
 
     if (s->home_directory == NULL)
     {
-        char *user_env = getenv("HOME");
-        s->home_directory = calloc(strlen(user_env) + strlen("/.clunk") + 1, sizeof(char));
-        strcpy(s->home_directory, user_env);
-        if (s->home_directory == NULL)
-            return -1;
+        if( notes_directory != NULL ) 
+        {
+            s->home_directory = 
+                calloc(strlen(notes_directory) + 1, sizeof(char));
+            strcpy(s->home_directory, notes_directory);
+            if (s->home_directory == NULL)
+                return -1;    
+        }
+        else 
+        {
+            char *user_env = getenv("HOME");
+            s->home_directory = 
+                calloc(strlen(user_env) + strlen("/.clunk") + 1, sizeof(char));
+            strcpy(s->home_directory, user_env);
+            if (s->home_directory == NULL)
+                return -1;
 
-        strcat(s->home_directory, "/.clunk");
+            strcat(s->home_directory, "/.clunk");
+        }
     }
 
     *dir = opendir(s->home_directory);
@@ -101,7 +114,7 @@ void storage_cleanup(Storage *s)
     }
 }
 
-int storage_get_notes(Storage *s)
+int storage_get_notes(Storage *s, char *notes_directory)
 {
     DIR *dir = NULL;
     struct dirent *dp;
@@ -109,7 +122,7 @@ int storage_get_notes(Storage *s)
     if (s == NULL)
         return -1;
 
-    if (get_or_create_notes_directory(s, &dir) == -1)
+    if (get_or_create_notes_directory(s, notes_directory, &dir) == -1)
         return -1;
 
     s->files = calloc(NOTES_ALLOC_STEP, sizeof(char *));

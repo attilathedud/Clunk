@@ -22,9 +22,10 @@ typedef struct
     int has_changed_file;
     int display_about_screen;
     char rename_buffer[RENAME_BUFFER_LEN];
+    char *notes_directory;
 } Menu;
 
-int menu_init(Menu *);
+int menu_init(Menu *, char *);
 int menu_handle_input(Menu *, Editor *, const int);
 void menu_print(Menu *);
 void menu_cleanup(Menu *);
