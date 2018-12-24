@@ -28,11 +28,26 @@ Test(storage, get_notes, .init = storage_setup, .fini = storage_teardown)
 
     char *user_env = getenv("HOME");
 
-    home_directory = calloc(strlen(user_env) + strlen("/.clunk/test_note") + 1, sizeof(char));
+    home_directory = calloc(strlen(user_env) + strlen("/.clunk") + 1, sizeof(char));
     strcpy(home_directory, user_env);
     strcat(home_directory, "/.clunk");
 
     storage_get_notes(&s, NULL);
+
+    cr_assert(strcmp(home_directory, s.home_directory) == 0);
+}
+
+Test(storage, get_notes_custom_directory, .init = storage_setup, .fini = storage_teardown)
+{
+    char *home_directory = NULL;
+
+    char *user_env = getenv("HOME");
+
+    home_directory = calloc(strlen(user_env) + strlen("/.clunk/subfolder") + 1, sizeof(char));
+    strcpy(home_directory, user_env);
+    strcat(home_directory, "/.clunk/subfolder");
+
+    storage_get_notes(&s, home_directory);
 
     cr_assert(strcmp(home_directory, s.home_directory) == 0);
 }
