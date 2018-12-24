@@ -298,22 +298,29 @@ void menu_print(Menu *m)
     }
     else
     {
+        char *note_title_buffer = calloc(MENU_OFFSET + 1, sizeof(char));
         for (int i = 0; i + m->scroll_offset < m->s.file_count; i++)
         {
+            strncpy(note_title_buffer, 
+                    m->s.files[i + m->scroll_offset], 
+                    MENU_OFFSET);
+
             if (i + m->scroll_offset == m->selected_file_index)
             {
                 attron(COLOR_PAIR(1));
                 move((i * 2) + 1, 5);
                 printw(" ");
-                printw(m->s.files[i + m->scroll_offset]);
+                note_title_buffer[MENU_OFFSET - 6] = '\0';
+                printw(note_title_buffer);
                 printw(" ");
                 attroff(COLOR_PAIR(1));
             }
             else
             {
-                mvprintw((i * 2) + 1, 1, m->s.files[i + m->scroll_offset]);
+                mvprintw((i * 2) + 1, 1, note_title_buffer);
             }
         }
+        free(note_title_buffer);
 
         if (m->is_deleting_file)
         {
