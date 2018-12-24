@@ -8,6 +8,8 @@ Clunk is a terminal-based note-taking program that focuses on taking notes and g
 - Notes are NOT automatically saved
 - Lines beginning with ^ are highlighted
 - Works on any system with ncurses installed
+- Shift+Left/Right or Page Up/Down pages the screen
+- Home/End go to the beginning and end of the line
 
 ## Installation
 The only dependency to build is ncurses. To install, simply clone the source and run `make`. A `build` folder will be created with the executable inside.
