@@ -86,10 +86,10 @@ int main(int argc, char **argv)
             editor_load_file(&e, m.s.home_directory, m.s.files[m.selected_file_index]);
         }
 
-        menu_print(&m);
-
         if (!m.display_about_screen)
             editor_print(&e);
+
+        menu_print(&m);
 
         // Print separator line
         mvvline(0, MENU_OFFSET, ACS_VLINE, LINES - 1 - m.is_renaming_file);
