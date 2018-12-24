@@ -32,7 +32,7 @@ Test(storage, get_notes, .init = storage_setup, .fini = storage_teardown)
     strcpy(home_directory, user_env);
     strcat(home_directory, "/.clunk");
 
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     cr_assert(strcmp(home_directory, s.home_directory) == 0);
 }
@@ -45,7 +45,7 @@ Test(storage, create_note, .init = storage_setup, .fini = storage_teardown)
 
     FILE *tf = NULL;
 
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     int digit_count = 0;
     int file_count = s.file_count;
@@ -79,7 +79,7 @@ Test(storage, delete_note, .init = storage_setup, .fini = storage_teardown)
     FILE *tf = NULL;
     char *note_path = NULL;
 
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     char *user_env = getenv("HOME");
 
@@ -93,7 +93,7 @@ Test(storage, delete_note, .init = storage_setup, .fini = storage_teardown)
     }
 
     storage_cleanup(&s);
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     storage_delete_note(&s, storage_find_note_index(&s, "test_delete_note"));
 
@@ -118,7 +118,7 @@ Test(storage, save_note, .init = storage_setup, .fini = storage_teardown)
     char *line = NULL;
     size_t n = 0;
 
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     char *user_env = getenv("HOME");
 
@@ -132,7 +132,7 @@ Test(storage, save_note, .init = storage_setup, .fini = storage_teardown)
     }
 
     storage_cleanup(&s);
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
     storage_save_note(&s, storage_find_note_index(&s, "test_save_note"), "test");
 
     if ((tf = fopen(note_path, "r")))
@@ -151,7 +151,7 @@ Test(storage, rename_note, .init = storage_setup, .fini = storage_teardown)
     FILE *tf = NULL;
     char *note_path = NULL;
 
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
 
     char *user_env = getenv("HOME");
 
@@ -165,7 +165,7 @@ Test(storage, rename_note, .init = storage_setup, .fini = storage_teardown)
     }
 
     storage_cleanup(&s);
-    storage_get_notes(&s);
+    storage_get_notes(&s, NULL);
     storage_rename_note(&s, storage_find_note_index(&s, "test_rename_note"), "test_newname_note");
 
     if ((tf = fopen(note_path, "r")))
